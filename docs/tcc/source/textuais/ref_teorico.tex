@@ -1,0 +1,69 @@
+\chapter[Referencial Teórico]{Referencial Teórico}
+
+Este capítulo apresenta os principais conceitos que fundamentam a avaliação de modelos de detecção de pessoas em imagens aéreas. São abordados aspectos relacionados à Visão Computacional, ao Aprendizado Profundo, à detecção de objetos, aos desafios associados a imagens capturadas por drones, aos modelos selecionados para comparação, às bases de dados utilizadas e às métricas de avaliação.
+
+\section{Visão Computacional e Aprendizado Profundo}
+
+A Visão Computacional é uma área da Computação voltada ao desenvolvimento de métodos capazes de interpretar informações visuais a partir de imagens e vídeos. Segundo \citeonline{szeliski2010}, essa área busca extrair descrições úteis do mundo real a partir de dados visuais, abrangendo tarefas como classificação, detecção, segmentação, reconstrução tridimensional e reconhecimento de padrões.
+
+Nas últimas décadas, o avanço do Aprendizado Profundo modificou significativamente a forma como problemas visuais são tratados. Em vez de depender exclusivamente de descritores manuais, os modelos baseados em redes neurais profundas aprendem representações diretamente a partir dos dados, o que contribuiu para avanços expressivos em tarefas de reconhecimento visual \cite{lecun2015, goodfellow2016}. Nesse contexto, as Redes Neurais Convolucionais, conhecidas como CNNs, tornaram-se particularmente relevantes para imagens, pois exploram operações de convolução capazes de capturar padrões locais, como bordas, texturas, formas e estruturas mais complexas ao longo das camadas da rede \cite{lecun2015}.
+
+Em aplicações de monitoramento por imagens aéreas, essas técnicas são especialmente importantes porque permitem a análise automática de grandes volumes de imagens capturadas por drones. Essa automação pode apoiar tarefas de vigilância, inspeção, busca e identificação de eventos de interesse, reduzindo a dependência de análise visual manual em cenários extensos ou de difícil acesso \cite{SREENATH2020656, drone_monitoring}.
+
+\section{Detecção de Objetos}
+
+A detecção de objetos é uma tarefa de Visão Computacional cujo objetivo é localizar e classificar instâncias de objetos presentes em uma imagem. Diferentemente da classificação de imagens, que atribui uma ou mais classes à imagem inteira, a detecção de objetos deve indicar onde cada objeto está localizado, normalmente por meio de caixas delimitadoras, além de atribuir uma classe e uma pontuação de confiança a cada detecção \cite{szeliski2010}.
+
+Em modelos modernos de detecção, a saída geralmente é composta por um conjunto de caixas delimitadoras, classes previstas e probabilidades associadas. Como um mesmo objeto pode gerar múltiplas predições sobrepostas, utiliza-se com frequência uma etapa de pós-processamento denominada \textit{Non-Maximum Suppression} (NMS), responsável por reduzir detecções redundantes e manter as caixas de maior confiança. Esse processo é amplamente empregado em detectores de uma etapa, como YOLO e SSD \cite{redmon2016yolo, liu2016ssd}.
+
+Os modelos de detecção podem ser agrupados, de forma geral, em abordagens de uma etapa e de duas etapas. Detectores de uma etapa realizam diretamente a predição de caixas e classes a partir da imagem de entrada, favorecendo maior velocidade de inferência. Detectores de duas etapas, por sua vez, primeiro geram propostas de regiões candidatas e depois classificam e refinam essas regiões, como ocorre no Faster R-CNN \cite{ren2015faster}. Essa distinção é relevante para este trabalho porque o monitoramento de áreas restritas exige equilíbrio entre qualidade de detecção e eficiência computacional.
+
+\section{Detecção de Pessoas em Imagens Aéreas}
+
+A detecção de pessoas em imagens aéreas apresenta desafios específicos em comparação com imagens capturadas em perspectiva terrestre. Em imagens obtidas por drones, pessoas frequentemente aparecem com poucos pixels, em ângulos superiores, parcialmente ocluídas ou misturadas a fundos visualmente complexos. Além disso, alterações de altitude, inclinação da câmera, iluminação, densidade de objetos e movimento da plataforma aérea podem afetar diretamente o desempenho dos modelos \cite{drone_detection, zhu2021visdrone}.
+
+Esses fatores aproximam o problema da detecção de pequenos objetos, uma das tarefas mais desafiadoras em detecção visual. Objetos pequenos tendem a apresentar menor quantidade de informação discriminativa, tornando mais difícil separar a classe de interesse do fundo da imagem. Em cenários de monitoramento, esse problema é ainda mais crítico porque a não detecção de uma pessoa em área restrita pode representar uma falha operacional relevante.
+
+No contexto deste trabalho, a detecção de pessoas não será analisada apenas como uma tarefa genérica de reconhecimento visual. A avaliação considera o uso potencial em monitoramento de áreas restritas, o que exige observar não somente a precisão das caixas delimitadoras, mas também a capacidade dos modelos de recuperar o maior número possível de pessoas presentes nas imagens, reduzir falsos positivos e operar em tempo compatível com aplicações práticas.
+
+\section{Modelos de Detecção de Objetos}
+
+Esta pesquisa considera três modelos representativos de diferentes estratégias de detecção: YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16. A escolha desses modelos permite comparar uma arquitetura moderna de uma etapa, uma arquitetura clássica de duas etapas e um baseline consolidado de uma etapa.
+
+\subsection{YOLO}
+
+YOLO, acrônimo de \textit{You Only Look Once}, é uma família de modelos de detecção de objetos baseada em predição direta de caixas delimitadoras e classes a partir da imagem de entrada. A proposta original apresentou a detecção como um problema de regressão única, permitindo inferência em tempo real e tornando a arquitetura atrativa para aplicações que exigem baixa latência \cite{redmon2016yolo}.
+
+Neste trabalho, será utilizado o YOLO11s, disponibilizado pela biblioteca Ultralytics. A escolha da variante ``s'' está relacionada ao equilíbrio entre desempenho e custo computacional, aspecto relevante para aplicações de monitoramento em que a velocidade de inferência também deve ser considerada. A documentação da Ultralytics descreve a família YOLO11 como voltada a tarefas como detecção, segmentação e classificação, com suporte a treinamento, validação, predição e exportação de modelos \cite{ultralytics_yolo11_docs}.
+
+\subsection{Faster R-CNN}
+
+O Faster R-CNN é um detector de duas etapas que combina uma rede de propostas de regiões, denominada \textit{Region Proposal Network} (RPN), com uma etapa posterior de classificação e refinamento das caixas delimitadoras. Essa arquitetura reduziu a dependência de métodos externos para geração de propostas e tornou o processo de detecção mais integrado e eficiente \cite{ren2015faster}.
+
+Neste trabalho, o Faster R-CNN ResNet-50 FPN será utilizado como representante de detectores de duas etapas. A presença de uma rede de pirâmide de características, ou FPN, favorece o uso de informações em múltiplas escalas, aspecto relevante para imagens aéreas nas quais pessoas podem aparecer em tamanhos variados. A implementação adotada será a disponibilizada pelo TorchVision, que oferece modelos de detecção pré-treinados e compatíveis com o ecossistema PyTorch \cite{torchvision_models}.
+
+\subsection{SSD}
+
+O SSD, ou \textit{Single Shot MultiBox Detector}, é um detector de uma etapa que realiza predições de caixas e classes em múltiplos mapas de características. A arquitetura foi proposta com o objetivo de combinar bom desempenho de detecção com inferência eficiente, eliminando a necessidade de uma etapa separada de propostas de regiões \cite{liu2016ssd}.
+
+Neste trabalho, será utilizado o SSD300 VGG16 como baseline clássico. Sua inclusão permite comparar os modelos mais recentes com uma arquitetura consolidada na literatura, contribuindo para avaliar se os ganhos obtidos por abordagens modernas são relevantes no cenário específico de imagens aéreas. Assim como o Faster R-CNN, o SSD será implementado por meio do TorchVision \cite{torchvision_models}.
+
+\section{Bases de Dados}
+
+A escolha da base de dados é uma decisão metodológica central em trabalhos de detecção de objetos, pois o desempenho dos modelos depende diretamente da distribuição das imagens, das classes anotadas, da qualidade das caixas delimitadoras e da proximidade entre os dados de treinamento e o cenário real de aplicação.
+
+O COCO, ou \textit{Common Objects in Context}, é uma base amplamente utilizada em tarefas de detecção, segmentação e reconhecimento visual, contendo objetos em contextos variados e anotações padronizadas \cite{lin2014microsoft}. Embora seja importante para pré-treinamento e comparação geral entre modelos, o COCO não é específico para imagens aéreas capturadas por drones, o que limita sua representatividade para o problema investigado neste trabalho.
+
+Por esse motivo, a base principal da pesquisa será o VisDrone. Esse conjunto de dados foi desenvolvido para desafios envolvendo imagens e vídeos capturados por drones, incluindo tarefas de detecção e rastreamento de objetos. O VisDrone apresenta cenários variados, diferentes condições de iluminação, mudanças de altitude e objetos em pequena escala, características compatíveis com o problema de detecção de pessoas em imagens aéreas \cite{zhu2021visdrone}.
+
+\section{Métricas de Avaliação}
+
+A avaliação de modelos de detecção de objetos exige métricas capazes de considerar simultaneamente a localização das caixas, a classificação correta dos objetos e a confiança das predições. Entre as métricas mais utilizadas estão precisão, recall, F1-score, IoU, AP, mAP e tempo de inferência.
+
+A precisão representa a proporção de detecções corretas entre todas as detecções produzidas pelo modelo, enquanto o recall representa a proporção de objetos reais que foram corretamente detectados. Em aplicações de monitoramento, o recall possui importância especial porque falsos negativos podem indicar pessoas não detectadas em áreas sensíveis. Por outro lado, a precisão também é relevante, pois falsos positivos podem gerar alertas indevidos e reduzir a confiabilidade do sistema.
+
+A métrica IoU mede o grau de sobreposição entre a caixa delimitadora prevista e a caixa real anotada. Essa medida é utilizada para determinar se uma detecção deve ser considerada correta, a partir de um limiar previamente definido. Já a métrica AP, ou \textit{Average Precision}, resume a relação entre precisão e recall ao longo de diferentes limiares de confiança. O mAP corresponde à média dos valores de AP e é amplamente utilizado em benchmarks de detecção, como PASCAL VOC e COCO \cite{everingham2010pascal, lin2014microsoft}.
+
+No padrão COCO, a avaliação considera múltiplos limiares de IoU, como ocorre no mAP@0.5:0.95, além de permitir análises por tamanho de objeto, como $AP_{small}$, $AP_{medium}$ e $AP_{large}$ \cite{lin2014microsoft}. Essa estratificação é particularmente relevante para esta pesquisa, pois um dos desafios centrais é avaliar a capacidade dos modelos de detectar pessoas pequenas em imagens aéreas.
+
+Além das métricas de qualidade de detecção, esta pesquisa considera o tempo de inferência e a taxa de quadros por segundo, expressa em FPS. Essas métricas permitem avaliar a viabilidade computacional dos modelos, especialmente em aplicações nas quais a resposta precisa ocorrer em tempo próximo ao real.

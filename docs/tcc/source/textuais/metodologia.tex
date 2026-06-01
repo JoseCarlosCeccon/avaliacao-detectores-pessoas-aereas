@@ -1,0 +1,135 @@
+\chapter[Metodologia]{Metodologia}
+
+Este capítulo descreve os procedimentos metodológicos adotados para a avaliação comparativa de modelos de detecção de pessoas em imagens aéreas. A metodologia foi estruturada de modo a permitir a comparação entre arquiteturas distintas de detecção de objetos, considerando tanto a qualidade das detecções quanto a eficiência computacional dos modelos no contexto de monitoramento de áreas restritas.
+
+\section{Caracterização da Pesquisa}
+
+Esta pesquisa caracteriza-se como aplicada, experimental e quantitativa. É aplicada porque busca avaliar técnicas de Visão Computacional em um problema prático de monitoramento por imagens aéreas. É experimental porque envolve a execução controlada de modelos de detecção de objetos sobre uma base de imagens previamente definida. É quantitativa porque a comparação entre os modelos será realizada por meio de métricas numéricas de desempenho, como precisão, recall, F1-score, \textit{Intersection over Union} (IoU), \textit{mean Average Precision} (mAP) e tempo de inferência.
+
+O foco da investigação está na detecção de pessoas em imagens capturadas por drones, especialmente em situações nas quais os alvos humanos aparecem em pequena escala, sob diferentes perspectivas e em cenários com variação de iluminação, oclusão e complexidade visual. Dessa forma, a análise não se limita à acurácia geral dos modelos, mas também considera sua adequação ao cenário específico de monitoramento aéreo.
+
+\section{Fluxo Metodológico}
+
+O fluxo da pesquisa foi organizado em cinco etapas principais: aquisição dos dados, pré-processamento, seleção dos modelos, execução dos testes e análise comparativa dos resultados. Inicialmente, será selecionada uma base de imagens aéreas com anotações de objetos e presença de pessoas. Em seguida, os dados serão preparados para treinamento e avaliação dos modelos, contemplando a padronização das anotações, a verificação das classes de interesse e o redimensionamento das imagens.
+
+Na etapa seguinte, serão definidos e configurados os modelos de detecção avaliados. Os modelos serão treinados ou ajustados a partir de pesos pré-treinados, utilizando os mesmos conjuntos de dados e critérios de avaliação. Após a execução dos testes, os resultados serão comparados por meio de métricas de desempenho e de eficiência computacional, buscando identificar vantagens, limitações e cenários nos quais cada arquitetura apresenta melhor adequação.
+
+\section{Base de Dados}
+
+A base principal adotada neste trabalho será o VisDrone, um conjunto de dados voltado para tarefas de detecção e rastreamento de objetos em imagens e vídeos capturados por drones \cite{zhu2021visdrone}. A escolha do VisDrone justifica-se pela aderência ao problema de pesquisa, uma vez que suas imagens apresentam variações de altitude, escala, densidade de objetos, iluminação, perspectiva e complexidade de fundo, características comuns em aplicações reais de monitoramento aéreo.
+
+Para este estudo, serão utilizadas as imagens da tarefa de detecção de objetos do VisDrone. As classes \textit{pedestrian} e \textit{people} serão tratadas como uma única classe-alvo, denominada pessoa, pois o objetivo do trabalho é avaliar a capacidade dos modelos de identificar presença humana em áreas monitoradas. As demais classes presentes na base, como veículos e bicicletas, não serão consideradas como alvos principais da avaliação, embora possam aparecer nas imagens como elementos de fundo.
+
+Após a organização local da base, foram identificadas 6.471 imagens no conjunto de treinamento, 548 imagens no conjunto de validação e 1.610 imagens no conjunto de teste. Considerando a união das classes \textit{pedestrian} e \textit{people}, foram contabilizadas 106.396 instâncias de pessoas no treinamento, 13.969 na validação e 27.382 no teste. Esses valores serão utilizados como referência para documentar a cobertura experimental da pesquisa.
+
+Sempre que possível, será mantida a divisão oficial do conjunto de dados em treinamento, validação e teste, evitando repartições aleatórias que possam dificultar a reprodutibilidade e a comparação com outros estudos. Caso seja necessário criar uma divisão própria, a separação será realizada de forma estratificada e documentada, preservando a proporção entre os subconjuntos e registrando a semente aleatória utilizada.
+
+\section{Pré-processamento dos Dados}
+
+O pré-processamento tem como objetivo padronizar os dados de entrada para os diferentes modelos avaliados. Inicialmente, as anotações originais do VisDrone serão verificadas para identificar inconsistências, imagens sem rótulos válidos e ocorrências associadas às classes de interesse. Em seguida, as anotações serão convertidas para os formatos exigidos pelas bibliotecas utilizadas.
+
+Para o modelo YOLO11, as anotações serão convertidas para o formato YOLO, no qual cada objeto é representado pela classe e pelas coordenadas normalizadas da caixa delimitadora. Para os modelos Faster R-CNN e SSD, implementados por meio do TorchVision, as anotações serão organizadas em formato compatível com a estrutura de tensores esperada pelo PyTorch. Além disso, para permitir a comparação uniforme entre os modelos, as anotações reais e as predições serão exportadas para o formato COCO, possibilitando o cálculo padronizado das métricas de detecção \cite{lin2014microsoft}.
+
+As imagens serão redimensionadas de acordo com a configuração de entrada de cada modelo, preservando as caixas delimitadoras correspondentes. No caso do YOLO11, será adotado redimensionamento com preenchimento proporcional, prática comum em modelos da família YOLO. Nos modelos do TorchVision, serão utilizadas as transformações recomendadas para cada arquitetura, mantendo registro da resolução empregada. Como o redimensionamento pode afetar diretamente a detecção de objetos pequenos, essa decisão será considerada na análise dos resultados.
+
+Também poderão ser aplicadas técnicas de aumento de dados, como espelhamento horizontal, variação moderada de brilho e contraste e pequenas alterações de escala. O uso dessas transformações será controlado e documentado, de modo que a comparação entre os modelos permaneça metodologicamente consistente.
+
+\section{Modelos Avaliados}
+
+Foram selecionados três modelos representativos de diferentes abordagens de detecção de objetos: um detector moderno de uma etapa, um detector de duas etapas e um detector clássico utilizado como linha de base. Essa escolha permite comparar arquiteturas com diferentes compromissos entre precisão, recall e velocidade de inferência.
+
+\begin{quadro}[ht]
+  \caption{Modelos definidos para avaliação experimental}
+  \label{quad:modelos-avaliados}
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{p{0.30\textwidth}Xp{0.25\textwidth}}
+    \hline
+    \bfseries Modelo & \bfseries Categoria experimental & \bfseries Implementação \\
+    \hline
+    YOLO11s & Detector moderno de uma etapa & Ultralytics \cite{ultralytics_yolo11_docs} \\
+    Faster R-CNN ResNet-50 FPN & Detector de duas etapas & TorchVision \cite{ren2015faster, torchvision_models} \\
+    SSD300 VGG16 & Detector de uma etapa utilizado como baseline clássico & TorchVision \cite{liu2016ssd, torchvision_models} \\
+    \hline
+  \end{tabularx}
+  \source
+\end{quadro}
+
+O YOLO11s será utilizado como representante de detectores modernos de uma etapa. Modelos dessa família realizam a predição das caixas delimitadoras e das classes diretamente a partir da imagem de entrada, favorecendo aplicações que demandam velocidade de inferência. O Faster R-CNN será utilizado como representante de modelos de duas etapas, tradicionalmente associados a maior precisão em diversas tarefas de detecção. O SSD300 VGG16 será empregado como baseline clássico, permitindo verificar o ganho obtido por arquiteturas mais recentes em relação a um detector consolidado na literatura.
+
+\section{Treinamento e Ajuste Fino}
+
+Os modelos serão inicializados com pesos pré-treinados em bases gerais de detecção de objetos, como o COCO, e posteriormente ajustados para o cenário de imagens aéreas. Essa estratégia de transferência de aprendizado é adequada porque reduz o custo de treinamento e permite aproveitar representações visuais previamente aprendidas em grandes bases de imagens.
+
+Para cada modelo, a camada ou cabeça de detecção será adaptada para a classe-alvo pessoa. No YOLO11, a configuração do conjunto de dados indicará apenas a classe de interesse. Nos modelos Faster R-CNN e SSD, as camadas finais de classificação serão ajustadas para considerar a classe pessoa e a classe de fundo.
+
+O treinamento será realizado utilizando o subconjunto de treinamento, enquanto o subconjunto de validação será empregado para acompanhar o desempenho durante o ajuste fino e selecionar o melhor ponto de parada. O subconjunto de teste será reservado exclusivamente para a avaliação final, evitando vazamento de informação entre treinamento e avaliação.
+
+Os principais hiperparâmetros a serem registrados são: número de épocas, tamanho do lote, resolução de entrada, taxa de aprendizado, otimizador, estratégia de aumento de dados, limiar de confiança, limiar de IoU para NMS e semente aleatória. Caso a disponibilidade computacional permita, cada experimento será repetido com diferentes sementes, possibilitando avaliar a estabilidade dos resultados.
+
+Antes da execução dos experimentos completos, foi realizada uma etapa de validação do pipeline experimental. Essa etapa teve como objetivo verificar se a conversão das anotações, a leitura do conjunto de dados, o treinamento, a validação e a geração de métricas ocorrem corretamente. Para isso, foi criado um subconjunto piloto com 300 imagens de treinamento, 100 imagens de validação e 100 imagens de teste, contendo apenas imagens com pelo menos uma instância da classe pessoa. Os testes pilotos contemplaram o YOLO11s, o Faster R-CNN ResNet-50 FPN e o SSD300 VGG16, permitindo validar tanto o fluxo da Ultralytics quanto o fluxo implementado em PyTorch/TorchVision. Os resultados obtidos nessa etapa não serão tratados como resultados finais da pesquisa, mas como evidência de funcionamento do fluxo experimental.
+
+\section{Métricas de Avaliação}
+
+A avaliação será realizada por meio de métricas amplamente utilizadas em detecção de objetos. A precisão mede a proporção de detecções corretas entre todas as detecções produzidas pelo modelo, enquanto o recall mede a proporção de objetos reais corretamente detectados. Essas métricas são definidas pelas Equações \ref{eq:precision} e \ref{eq:recall}.
+
+\begin{equation}
+    \label{eq:precision}
+    Precisao = \frac{VP}{VP + FP}
+\end{equation}
+
+\begin{equation}
+    \label{eq:recall}
+    Recall = \frac{VP}{VP + FN}
+\end{equation}
+
+Nessas equações, VP representa os verdadeiros positivos, FP representa os falsos positivos e FN representa os falsos negativos. O F1-score será utilizado como medida de equilíbrio entre precisão e recall, conforme a Equação \ref{eq:f1}.
+
+\begin{equation}
+    \label{eq:f1}
+    F1 = 2 \times \frac{Precisao \times Recall}{Precisao + Recall}
+\end{equation}
+
+A métrica IoU será utilizada para quantificar a sobreposição entre a caixa delimitadora prevista pelo modelo e a caixa real anotada na base. Uma detecção será considerada correta quando a classe prevista corresponder à classe-alvo e a IoU atingir o limiar definido no protocolo de avaliação.
+
+Também será utilizado o mAP, métrica consolidada para avaliação de detectores de objetos. Serão considerados o mAP@0.5, que utiliza IoU mínima de 0.5, e o mAP@0.5:0.95, que calcula a média em múltiplos limiares de IoU. Para reduzir diferenças entre as ferramentas utilizadas, as predições dos modelos serão registradas em formato COCO e avaliadas por meio de um protocolo comum. Quando disponível, a avaliação também será estratificada por tamanho dos objetos, utilizando métricas como $AP_{small}$, $AP_{medium}$ e $AP_{large}$, pois a detecção de pessoas pequenas constitui um dos principais desafios do cenário aéreo.
+
+Além das métricas de qualidade de detecção, será avaliada a eficiência computacional dos modelos. Para isso, serão medidos o tempo médio de inferência por imagem e a taxa de quadros por segundo, expressa em FPS. Essas medidas serão calculadas no mesmo ambiente computacional para todos os modelos, após um número inicial de inferências de aquecimento, a fim de reduzir interferências de inicialização.
+
+\section{Ambiente Computacional}
+
+Os experimentos devem ser executados em um ambiente computacional controlado, com registro das características de hardware e software. Como o tempo de inferência depende diretamente do equipamento utilizado, especialmente da disponibilidade de GPU, a comparação de FPS será considerada válida apenas entre modelos avaliados no mesmo ambiente.
+
+\begin{quadro}[ht]
+  \caption{Ambiente computacional inicialmente identificado}
+  \label{quad:ambiente-computacional}
+  \centering
+  \begin{tabularx}{\textwidth}{lX}
+    \hline
+    \bfseries Item & \bfseries Configuração \\
+    \hline
+    Sistema operacional & Microsoft Windows 11 Pro, 64 bits \\
+    Processador & Intel Core i5-12450H, 8 núcleos e 12 processadores lógicos \\
+    Memória RAM & Aproximadamente 8 GB \\
+    GPU identificada & Intel UHD Graphics; GPU NVIDIA/CUDA não identificada no ambiente local \\
+    Python & 3.12.10 \\
+    PyTorch & 2.10.0, versão CPU \\
+    TorchVision & 0.25.0, versão CPU \\
+    Ultralytics & 8.4.21 \\
+    pycocotools & 2.0.11 \\
+    \hline
+  \end{tabularx}
+  \source
+\end{quadro}
+
+Caso os experimentos finais sejam executados em outro ambiente, como uma estação com GPU dedicada ou serviço em nuvem, as informações do Quadro \ref{quad:ambiente-computacional} deverão ser atualizadas. Essa atualização é necessária porque resultados de tempo de inferência obtidos em CPU não devem ser comparados diretamente com resultados obtidos em GPU.
+
+\section{Forma de Comparação dos Resultados}
+
+A comparação dos modelos será conduzida em três dimensões principais: qualidade de detecção, eficiência computacional e adequação ao cenário de monitoramento aéreo. Na primeira dimensão, serão analisadas as métricas de precisão, recall, F1-score, IoU e mAP. Na segunda, serão avaliados o tempo médio de inferência e o FPS. Na terceira, será discutida a capacidade dos modelos de detectar pessoas pequenas, lidar com cenas densas e reduzir falsos positivos em áreas visualmente complexas.
+
+Para que a comparação seja metodologicamente consistente, todos os modelos deverão ser avaliados no mesmo subconjunto de imagens, com as mesmas anotações de referência e com as predições exportadas em formato COCO. Dessa forma, evita-se comparar métricas geradas por rotinas internas distintas de cada biblioteca, tornando os resultados mais reprodutíveis e mais adequados à análise científica.
+
+Os resultados serão apresentados em tabelas comparativas e gráficos. As tabelas deverão sintetizar as métricas quantitativas de cada modelo, enquanto os gráficos poderão evidenciar diferenças de desempenho, como comparação de mAP, recall e FPS. Também serão incluídos exemplos visuais de detecções corretas, falsos positivos e falsos negativos, permitindo uma análise qualitativa dos erros cometidos pelos modelos.
+
+Por fim, a escolha do modelo mais adequado não será baseada em uma única métrica isolada. O melhor modelo será discutido considerando o equilíbrio entre desempenho de detecção e custo computacional, de acordo com as necessidades do monitoramento de áreas restritas em imagens aéreas.

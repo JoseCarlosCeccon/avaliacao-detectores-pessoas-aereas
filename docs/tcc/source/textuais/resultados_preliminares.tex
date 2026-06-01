@@ -1,0 +1,183 @@
+\chapter[Resultados Preliminares]{Resultados Preliminares}
+
+Este capítulo apresenta os resultados preliminares obtidos na etapa de validação do pipeline experimental. Essa etapa teve como finalidade verificar se o conjunto de dados convertido a partir do VisDrone poderia ser corretamente lido pelos frameworks de treinamento, se as anotações estavam compatíveis com as imagens e se o processo de treinamento, validação e geração de artefatos ocorria adequadamente. Portanto, os resultados apresentados neste capítulo não constituem a comparação final entre os modelos definidos na metodologia, mas uma evidência inicial de funcionamento do fluxo experimental.
+
+\section{Desenvolvimento Inicial do Projeto}
+
+Como evidência prática do desenvolvimento inicial, foi implementado um pipeline experimental para preparação dos dados, treinamento piloto e avaliação preliminar dos modelos de detecção. Esse pipeline contempla a conversão das anotações do VisDrone para o formato YOLO, a criação de subconjuntos pilotos, a adaptação das anotações para modelos do TorchVision e a execução inicial dos modelos YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16.
+
+Os artefatos gerados incluem arquivos de perdas de treinamento, métricas de validação, pesos ajustados dos modelos e imagens com caixas delimitadoras previstas. Dessa forma, o estágio atual do projeto já apresenta um protótipo funcional do fluxo experimental necessário para a comparação dos modelos definidos na metodologia.
+
+\begin{table}[ht]
+  \caption{Artefatos produzidos no desenvolvimento inicial}
+  \label{tab:artefatos-desenvolvimento-inicial}
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{lXX}
+    \hline
+    \bfseries Artefato & \bfseries Evidência produzida & \bfseries Finalidade no projeto \\
+    \hline
+    Scripts & Rotinas para inspeção do VisDrone, conversão das anotações, criação de subconjunto piloto, treinamento e avaliação dos modelos. & Automatizar o fluxo experimental e favorecer a reprodutibilidade. \\
+    Dataset convertido & Base VisDrone organizada no formato YOLO, com união das classes \textit{pedestrian} e \textit{people} na classe pessoa. & Padronizar a entrada dos modelos e viabilizar os testes pilotos. \\
+    Métricas & Arquivos com precisão, recall, F1-score, tempo médio de inferência, FPS e perdas de treinamento. & Quantificar o desempenho preliminar dos detectores avaliados. \\
+    Checkpoints & Pesos ajustados gerados após os treinamentos pilotos. & Registrar o estado dos modelos treinados e permitir novas inferências. \\
+    Imagens de predição & Figuras com anotações reais e caixas previstas pelos modelos. & Apoiar a análise qualitativa das detecções, falsos positivos e falsos negativos. \\
+    Predições COCO & Arquivos JSON com as predições dos três modelos no formato COCO. & Permitir avaliação padronizada de precisão, recall, F1-score, mAP e tempo de inferência. \\
+    \hline
+  \end{tabularx}
+  \source
+\end{table}
+
+A Figura \ref{fig:predicao-faster-rcnn-piloto} apresenta um exemplo de predição gerada pelo modelo Faster R-CNN no subconjunto piloto. As caixas vermelhas representam as anotações reais da base e as caixas verdes indicam as detecções previstas pelo modelo. A figura evidencia que o pipeline implementado é capaz de gerar saídas visuais interpretáveis, permitindo analisar acertos, perdas de instâncias e possíveis falsos positivos.
+
+\begin{figure}[ht]
+  \caption{Exemplo de predição gerada pelo modelo Faster R-CNN no subconjunto piloto}
+  \label{fig:predicao-faster-rcnn-piloto}
+  \centering
+  \includegraphics[width=\textwidth]{predicao_faster_rcnn_piloto.jpg}
+  \source
+\end{figure}
+
+\section{Validação do Pipeline Experimental}
+
+Após a conversão das anotações do VisDrone para o formato YOLO, foi criado um subconjunto piloto com 300 imagens de treinamento, 100 imagens de validação e 100 imagens de teste. Nesse subconjunto, foram mantidas apenas imagens contendo pelo menos uma instância da classe pessoa, formada pela união das categorias \textit{pedestrian} e \textit{people} do VisDrone.
+
+A validação preliminar foi realizada em três etapas. Inicialmente, foram executados testes com o modelo YOLO11s, utilizando a biblioteca Ultralytics. Em seguida, foram executados pilotos com os modelos Faster R-CNN ResNet-50 FPN e SSD300 VGG16, utilizando implementações do TorchVision. Por fim, as predições dos três modelos foram exportadas para o formato COCO, permitindo uma avaliação padronizada no mesmo subconjunto de imagens. Todos os modelos foram inicializados com pesos pré-treinados em bases gerais de detecção, como o COCO, e ajustados para a classe-alvo pessoa \cite{lin2014microsoft, ultralytics_yolo11_docs, torchvision_models}.
+
+\section{Pilotos com YOLO11s}
+
+Foram realizados dois testes iniciais com o modelo YOLO11s. O primeiro teste utilizou uma época de treinamento, resolução de entrada de 320 pixels, tamanho de lote igual a 2 e execução em CPU. O segundo teste utilizou três épocas de treinamento, resolução de entrada de 640 pixels, tamanho de lote igual a 2 e também execução em CPU. Ambos os testes utilizaram pesos pré-treinados do YOLO11s e foram conduzidos com o objetivo de validar o funcionamento do pipeline, não de estabelecer desempenho final do modelo.
+
+\begin{table}[ht]
+  \caption{Resultados preliminares do teste piloto com YOLO11s}
+  \label{tab:resultados-piloto-yolo}
+  \centering
+  \begin{tabular}{lccccc}
+    \hline
+    \bfseries Configuração & \bfseries Precisão & \bfseries Recall & \bfseries \textit{mAP@0.5} & \bfseries \textit{mAP@0.5:0.95} & \bfseries Tempo (s) \\
+    \hline
+    1 época, 320 px & 0,2786 & 0,0564 & 0,0412 & 0,0102 & 165,117 \\
+    3 épocas, 640 px & 0,3569 & 0,2576 & 0,2143 & 0,0699 & 878,320 \\
+    \hline
+  \end{tabular}
+  \source
+\end{table}
+
+Os resultados da Tabela \ref{tab:resultados-piloto-yolo} indicam que o pipeline experimental foi executado com sucesso para o modelo YOLO11s. O treinamento gerou pesos do modelo, métricas de validação, curvas de desempenho, matriz de confusão e imagens com predições sobre o conjunto de validação. Além disso, não foram identificados erros de leitura das imagens, incompatibilidades no arquivo de configuração do conjunto de dados ou falhas no carregamento das anotações.
+
+Observa-se que o segundo teste, realizado com três épocas e resolução de 640 pixels, apresentou desempenho superior ao primeiro teste em todas as métricas consideradas. O \textit{mAP@0.5} aumentou de 0,0412 para 0,2143, enquanto o recall aumentou de 0,0564 para 0,2576. Esse comportamento sugere que o aumento da resolução de entrada e do número de épocas favoreceu a detecção de pessoas no subconjunto analisado.
+
+\section{Pilotos com Faster R-CNN e SSD}
+
+Após a validação inicial com YOLO11s, foram executados pilotos reais com os modelos Faster R-CNN ResNet-50 FPN e SSD300 VGG16. Esses testes utilizaram o mesmo subconjunto piloto, porém com limite de 50 imagens de treinamento e 20 imagens de validação, uma época de treinamento, tamanho de lote igual a 1 e execução em CPU. O objetivo foi confirmar se os modelos do TorchVision conseguiam ler as anotações convertidas, substituir corretamente as cabeças de detecção para a classe pessoa e gerar perdas, métricas e imagens de predição.
+
+Nos modelos do TorchVision, a classe pessoa foi mapeada para o índice 1, pois o índice 0 é reservado para a classe de fundo. A avaliação preliminar utilizou limiar de confiança igual a 0,25 e considerou como verdadeiro positivo uma detecção cuja interseção sobre união com uma anotação real fosse maior ou igual a 0,50. A Tabela \ref{tab:resultados-piloto-torchvision} apresenta os resultados obtidos.
+
+\begin{table}[ht]
+  \caption{Resultados preliminares dos pilotos com modelos TorchVision}
+  \label{tab:resultados-piloto-torchvision}
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{Xcccccc}
+    \hline
+    \bfseries Modelo & \bfseries Precisão & \bfseries Recall & \bfseries F1 & \bfseries VP & \bfseries FP & \bfseries FN \\
+    \hline
+    Faster R-CNN ResNet-50 FPN & 0,4495 & 0,2817 & 0,3463 & 129 & 158 & 329 \\
+    SSD300 VGG16 & 0,0003 & 0,0022 & 0,0004 & 1 & 3999 & 457 \\
+    \hline
+  \end{tabularx}
+  \source
+\end{table}
+
+A Tabela \ref{tab:tempo-piloto-torchvision} apresenta o tempo médio de inferência por imagem e a taxa de quadros por segundo obtidos nos pilotos. Esses valores devem ser interpretados com cautela, pois foram medidos em CPU e com subconjunto reduzido de validação.
+
+\begin{table}[ht]
+  \caption{Tempo de inferência nos pilotos com modelos TorchVision}
+  \label{tab:tempo-piloto-torchvision}
+  \centering
+  \begin{tabularx}{\textwidth}{Xcc}
+    \hline
+    \bfseries Modelo & \bfseries Tempo médio por imagem (s) & \bfseries FPS \\
+    \hline
+    Faster R-CNN ResNet-50 FPN & 2,4302 & 0,4115 \\
+    SSD300 VGG16 & 0,2931 & 3,4119 \\
+    \hline
+  \end{tabularx}
+  \source
+\end{table}
+
+O Faster R-CNN apresentou desempenho inicial superior ao SSD em precisão, recall e F1-score, embora tenha sido consideravelmente mais lento em CPU. Esse comportamento é coerente com a característica de modelos de duas etapas, que tendem a realizar processamento mais custoso por imagem em razão da geração e refinamento de propostas de regiões \cite{ren2015faster}.
+
+O SSD apresentou comportamento inadequado neste piloto, com número muito elevado de falsos positivos. A inspeção qualitativa das imagens de predição indicou a geração de muitas caixas em regiões de borda e em áreas sem presença humana. Esse resultado não permite concluir que o SSD seja inadequado ao problema, mas indica que o modelo exige revisão de configuração, ajuste do limiar de confiança, treinamento por mais épocas e avaliação com protocolo mais robusto antes de qualquer comparação final.
+
+As métricas apresentadas nesta seção foram utilizadas principalmente para verificar se os modelos do TorchVision estavam treinando, inferindo e gerando artefatos corretamente. A comparação mais adequada entre os três detectores é apresentada na seção seguinte, na qual todos os modelos são avaliados por um mesmo protocolo em formato COCO.
+
+\section{Avaliação Padronizada em Formato COCO}
+
+Após a execução dos pilotos, foi realizada uma avaliação padronizada para reduzir a diferença entre as métricas geradas nativamente pelo YOLO11s e as métricas inicialmente calculadas para os modelos do TorchVision. Para isso, as anotações reais e as predições dos três modelos foram convertidas para o formato COCO, permitindo calcular as mesmas métricas para YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16.
+
+A avaliação padronizada foi conduzida no subconjunto piloto de teste, composto por 100 imagens e 2.189 instâncias anotadas da classe pessoa. Para as métricas precisão, recall e F1-score, foi adotado limiar de confiança igual a 0,25 e limiar de IoU igual a 0,50. Para o cálculo de \textit{mAP}, foi utilizado o protocolo COCO, contemplando \textit{mAP@0.5} e \textit{mAP@0.5:0.95}. A Tabela \ref{tab:resultados-padronizados-coco-teste} apresenta os resultados de qualidade de detecção.
+
+\begin{table}[ht]
+  \caption{Resultados padronizados no subconjunto piloto de teste}
+  \label{tab:resultados-padronizados-coco-teste}
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{Xccccc}
+    \hline
+    \bfseries Modelo & \bfseries Precisão & \bfseries Recall & \bfseries F1 & \bfseries \textit{mAP@0.5} & \bfseries \textit{mAP@0.5:0.95} \\
+    \hline
+    YOLO11s & 0,7950 & 0,0585 & 0,1089 & 0,1301 & 0,0478 \\
+    Faster R-CNN ResNet-50 FPN & 0,2118 & 0,1617 & 0,1834 & 0,0895 & 0,0339 \\
+    SSD300 VGG16 & 0,0002 & 0,0027 & 0,0004 & 0,0000 & 0,0000 \\
+    \hline
+  \end{tabularx}
+  \source
+\end{table}
+
+A Tabela \ref{tab:tempo-padronizado-coco-teste} apresenta as métricas de eficiência computacional obtidas no mesmo subconjunto de teste. Esses valores foram medidos em CPU e, portanto, devem ser interpretados como evidência preliminar de custo computacional, não como desempenho final em ambiente de produção.
+
+\begin{table}[ht]
+  \caption{Eficiência computacional padronizada no subconjunto piloto de teste}
+  \label{tab:tempo-padronizado-coco-teste}
+  \centering
+  \begin{tabularx}{\textwidth}{Xcc}
+    \hline
+    \bfseries Modelo & \bfseries Tempo médio por imagem (s) & \bfseries FPS \\
+    \hline
+    YOLO11s & 0,1103 & 9,0668 \\
+    Faster R-CNN ResNet-50 FPN & 2,2035 & 0,4538 \\
+    SSD300 VGG16 & 0,5345 & 1,8709 \\
+    \hline
+  \end{tabularx}
+  \source
+\end{table}
+
+Os resultados padronizados indicam que o YOLO11s apresentou a maior precisão, o maior \textit{mAP@0.5}, o maior \textit{mAP@0.5:0.95} e a maior taxa de quadros por segundo no subconjunto piloto de teste. O Faster R-CNN, por outro lado, apresentou maior recall e maior F1-score, o que sugere maior capacidade inicial de recuperar instâncias da classe pessoa nesse subconjunto, embora com custo computacional significativamente superior. O SSD300 VGG16 apresentou desempenho muito baixo, mantendo comportamento instável e grande quantidade de falsos positivos.
+
+Mesmo com a padronização, esses resultados ainda não devem ser interpretados como conclusão final do trabalho. Eles demonstram que o protocolo comparativo foi implementado e que as métricas podem ser calculadas de forma uniforme entre os modelos, mas os treinamentos utilizados ainda são pilotos, com poucas épocas e subconjuntos reduzidos.
+
+\section{Interpretação Geral dos Resultados Pilotos}
+
+De forma geral, os testes preliminares indicam que o pipeline experimental está funcional para as três arquiteturas previstas na metodologia: YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16. Foram gerados pesos ajustados, arquivos de perdas, métricas quantitativas e imagens de predição para inspeção visual. Essa validação é importante porque reduz o risco de problemas estruturais na etapa posterior de experimentos completos.
+
+Apesar disso, os valores obtidos ainda são baixos para uma aplicação final de monitoramento de áreas restritas. Isso é esperado, pois os testes foram conduzidos com subconjuntos reduzidos, poucas épocas de treinamento e execução em CPU. Além disso, o problema analisado envolve pessoas pequenas em imagens aéreas, condição reconhecidamente desafiadora para modelos de detecção de objetos \cite{zhu2021visdrone}.
+
+Do ponto de vista qualitativo, as imagens de validação geradas indicaram que o YOLO11s e o Faster R-CNN foram capazes de produzir algumas detecções coerentes de pessoas em cenas aéreas. Entretanto, também foram observadas perdas de instâncias, especialmente em regiões com objetos pequenos, alta densidade de pessoas ou presença de fundo visualmente complexo. No caso do SSD, a quantidade de falsos positivos no piloto reforça a necessidade de análise específica dos limiares de confiança e do comportamento das predições.
+
+\section{Limitações dos Resultados Preliminares}
+
+Os resultados apresentados não devem ser interpretados como evidência conclusiva sobre o desempenho dos modelos nem como resposta definitiva ao problema de pesquisa. O objetivo desta etapa foi exclusivamente validar a execução do pipeline experimental. Entre as principais limitações desta validação preliminar, destacam-se:
+
+\begin{itemize}
+    \item uso de subconjuntos reduzidos do VisDrone;
+    \item treinamento com poucas épocas;
+    \item execução em CPU, o que limita a análise de tempo de inferência;
+    \item avaliação padronizada ainda restrita ao subconjunto piloto, não à base completa;
+    \item ausência de avaliação final com modelos treinados em configuração robusta;
+    \item ausência de discussão sistemática por tamanho dos objetos;
+    \item ausência de análise sistemática de falsos positivos e falsos negativos em todo o conjunto de teste;
+    \item uso de limiar de confiança preliminar, especialmente crítico para o SSD.
+\end{itemize}
+
+Dessa forma, a próxima etapa da pesquisa consistirá na execução dos experimentos completos com os três modelos definidos, utilizando o mesmo protocolo de avaliação, preferencialmente em GPU. Esses experimentos deverão empregar métricas padronizadas, como precisão, recall, F1-score, \textit{mAP@0.5}, \textit{mAP@0.5:0.95}, tempo médio de inferência e FPS, permitindo comparar desempenho de detecção e eficiência computacional de forma consistente.

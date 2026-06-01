@@ -1,0 +1,39 @@
+\chapter[Introdução]{Introdução}
+
+Os Veículos Aéreos Não Tripulados (VANTs), também conhecidos como drones ou Aeronaves Remotamente Pilotadas (ARP), têm sido amplamente utilizados em diferentes aplicações civis e institucionais, incluindo monitoramento em tempo real, sensoriamento remoto, busca e resgate, segurança, vigilância e inspeção de infraestrutura civil \cite{SREENATH2020656, drone_monitoring}. Essas plataformas possibilitam a obtenção de imagens aéreas de forma ágil e com ampla cobertura espacial, favorecendo atividades que demandam observação contínua de grandes áreas ou de regiões de difícil acesso. Além disso, podem operar com câmeras, sensores e dispositivos de geolocalização, contribuindo para a geração de dados atualizados e para a automação de tarefas baseadas em análise visual.
+
+Com o crescimento do uso de drones em diferentes cenários, ampliaram-se também as demandas relacionadas à segurança e ao monitoramento automatizado. Nesse contexto, a análise de imagens aéreas por técnicas de Visão Computacional constitui uma abordagem relevante para apoiar a identificação de pessoas em áreas sensíveis ou de acesso controlado. Segundo \citeonline{szeliski2010}, a Visão Computacional busca desenvolver métodos capazes de extrair informações semânticas a partir de dados visuais, sendo aplicada em tarefas como detecção, segmentação e reconhecimento de padrões.
+
+Tal aplicação é relevante porque a presença humana em regiões delimitadas pode representar um evento de interesse para fins de vigilância, controle de acesso, prevenção de incidentes ou apoio à tomada de decisão \cite{drone_monitoring}. Nesse sentido, a integração entre sistemas embarcados em VANTs e algoritmos inteligentes amplia significativamente a capacidade de monitoramento automatizado \cite{drone_monitoring}. Além disso, abordagens baseadas em Redes Neurais Convolucionais, fundamentadas nos avanços do Aprendizado Profundo discutidos por \citeonline{lecun2015} e \citeonline{goodfellow2016}, têm sido amplamente empregadas em tarefas de detecção visual, inclusive em bases e desafios com imagens capturadas por drones \cite{drone_detection, zhu2021visdrone}.
+
+Entretanto, a detecção de pessoas em imagens aéreas constitui uma tarefa desafiadora. Em comparação com imagens convencionais, os alvos humanos costumam aparecer em tamanho reduzido, sob diferentes ângulos de visão, com variação de escala, iluminação e complexidade de fundo. Esses desafios estão diretamente relacionados ao problema de detecção de pequenos objetos, discutido em bases aéreas como o VisDrone \cite{zhu2021visdrone}. Também se relacionam às diferenças entre arquiteturas de detecção, como YOLO \cite{redmon2016yolo}, Faster R-CNN \cite{ren2015faster} e SSD \cite{liu2016ssd}, que adotam estratégias distintas para localização e classificação de objetos.
+
+A literatura da área mostra que métodos clássicos de reconhecimento de padrões vêm sendo progressivamente substituídos por abordagens baseadas em Aprendizado Profundo, especialmente por Redes Neurais Convolucionais, em razão de sua capacidade de extrair automaticamente características relevantes das imagens e alcançar resultados superiores em tarefas de detecção e classificação visual \cite{lecun2015, goodfellow2016}. Nesse contexto, o desempenho desses modelos depende fortemente da arquitetura utilizada, da qualidade dos dados e das estratégias de treinamento adotadas.
+
+No caso das imagens aéreas, diferentes arquiteturas podem apresentar comportamentos distintos diante das dificuldades impostas por pequenos objetos, variações de perspectiva e cenários visuais complexos. Dessa forma, a escolha de modelos adequados para esse tipo de aplicação torna-se uma questão relevante tanto do ponto de vista técnico quanto acadêmico, especialmente quando se busca equilibrar desempenho de detecção e eficiência computacional. Nesta pesquisa, essa comparação será realizada considerando modelos representativos de diferentes abordagens: YOLO11s, como detector moderno de uma etapa; Faster R-CNN ResNet-50 FPN, como detector de duas etapas; e SSD300 VGG16, como linha de base clássica \cite{ultralytics_yolo11_docs, ren2015faster, liu2016ssd, torchvision_models}.
+
+Diante desse cenário, este trabalho adota como tema a avaliação de modelos de detecção de pessoas para monitoramento de áreas restritas em imagens aéreas. O problema de pesquisa que orienta o estudo pode ser expresso pela seguinte questão: quais modelos de detecção de pessoas apresentam melhor desempenho para o monitoramento de áreas restritas em imagens aéreas, considerando métricas de qualidade de detecção e eficiência computacional? Parte-se do pressuposto de que diferentes arquiteturas de detecção apresentam desempenhos distintos nesse cenário, em razão das características específicas das imagens aéreas e das limitações inerentes aos modelos empregados.
+
+A justificativa para a realização desta pesquisa está associada, em primeiro lugar, à sua relevância técnica, uma vez que a comparação entre diferentes modelos de detecção pode auxiliar na identificação de abordagens mais adequadas para aplicações de monitoramento baseadas em imagens aéreas. Além disso, o estudo possui relevância acadêmica, pois contribui para a compreensão do desempenho de modelos de Visão Computacional em um domínio específico, caracterizado por desafios como pequenos objetos, variação de perspectiva, ruído, oclusão e ambientes visualmente complexos. Também se destaca a relevância prática do tema, considerando que sistemas de monitoramento automático podem apoiar futuras aplicações em contextos que demandem controle visual mais eficiente de espaços restritos, como instalações industriais, áreas institucionais e regiões de acesso controlado.
+
+Assim, este trabalho propõe a análise comparativa de modelos de detecção de pessoas em imagens aéreas, buscando identificar suas potencialidades e limitações no contexto de monitoramento de áreas restritas. Para isso, serão consideradas métricas amplamente utilizadas em detecção de objetos, como precisão, recall, F1-score, IoU, mAP e tempo de inferência, permitindo uma análise objetiva do desempenho de cada abordagem \cite{everingham2010pascal, lin2014microsoft}.
+
+\section{Objetivos}
+
+Esta pesquisa tem como propósito central avaliar modelos de detecção de pessoas aplicados ao contexto de imagens aéreas voltadas ao monitoramento de áreas restritas. Para melhor delimitar esse propósito, apresentam-se, a seguir, o objetivo geral e os objetivos específicos do trabalho.
+
+\subsection{\textit{Objetivo Geral}}
+
+Avaliar modelos de detecção de pessoas aplicados ao monitoramento de áreas restritas em imagens aéreas, comparando seu desempenho com base em métricas de qualidade de detecção e eficiência computacional.
+
+\subsection{\textit{Objetivos Específicos}}
+
+\begin{itemize}
+    \item Realizar levantamento bibliográfico sobre Visão Computacional, detecção de objetos, detecção de pessoas e monitoramento por imagens aéreas;
+    \item Selecionar modelos de detecção de pessoas representativos de diferentes abordagens, incluindo YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16;
+    \item Definir e organizar uma base de imagens aéreas compatível com o escopo da pesquisa, tendo o VisDrone como base principal;
+    \item Aplicar os modelos selecionados à base de dados escolhida;
+    \item Avaliar o desempenho dos modelos por meio de métricas como precisão, recall, F1-score, Intersection over Union, mean Average Precision e tempo de inferência;
+    \item Comparar os resultados obtidos, identificando vantagens, limitações e adequação de cada modelo ao monitoramento de áreas restritas;
+    \item Identificar o modelo ou abordagem com melhor desempenho para o cenário analisado.
+\end{itemize}
