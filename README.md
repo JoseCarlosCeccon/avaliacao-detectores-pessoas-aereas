@@ -1,6 +1,6 @@
 # TCC - VisDrone Person Detection
 
-This folder contains the code and data preparation utilities for the TCC experiments.
+This repository contains the code and data preparation utilities for the TCC experiments on person detection in aerial drone images.
 
 ## Dataset
 
@@ -24,7 +24,7 @@ The converted YOLO dataset merges VisDrone categories `pedestrian` and `people` 
 0 person
 ```
 
-## Commands
+## Dataset Commands
 
 Inspect the original VisDrone folders:
 
@@ -50,15 +50,15 @@ YOLO dataset configuration:
 datasets/visdrone_person_yolo/visdrone_person.yaml
 ```
 
-## Next experiment
-
 Create a small pilot subset before training all final models:
 
 ```powershell
 python .\scripts\make_yolo_subset.py --source-root .\datasets\visdrone_person_yolo --output-root .\datasets\visdrone_person_yolo_pilot --train 300 --val 100 --test 100
 ```
 
-Start with a small pilot training run:
+## YOLO Pilot
+
+Start with a small YOLO pilot training run:
 
 ```powershell
 yolo detect train model=yolo11s.pt data=.\datasets\visdrone_person_yolo_pilot\visdrone_person_pilot.yaml epochs=3 imgsz=640 batch=4 device=cpu
@@ -66,7 +66,7 @@ yolo detect train model=yolo11s.pt data=.\datasets\visdrone_person_yolo_pilot\vi
 
 If a CUDA GPU is available, replace `device=cpu` with the GPU device, for example `device=0`.
 
-## TorchVision pilots
+## TorchVision Pilots
 
 Faster R-CNN and SSD use the same converted YOLO dataset through a PyTorch `Dataset` class in:
 
@@ -107,11 +107,17 @@ Each pilot saves:
 
 ```text
 outputs/pilots/<model>/
-├── losses.csv
-├── metrics.csv
-├── summary.json
-├── predictions/
-└── *_pilot_last.pt
+  losses.csv
+  metrics.csv
+  summary.json
+  predictions/
+  *_pilot_last.pt
+```
+
+A lightweight summary of the pilot runs is tracked in:
+
+```text
+experiments/pilot_results.md
 ```
 
 These pilots are intended to validate the experimental pipeline. They are not final TCC results.
