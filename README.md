@@ -121,3 +121,32 @@ experiments/pilot_results.md
 ```
 
 These pilots are intended to validate the experimental pipeline. They are not final TCC results.
+
+## Standardized COCO Evaluation
+
+After the pilot trainings, evaluate all models with the same COCO-style protocol:
+
+```powershell
+python .\scripts\evaluate_standardized_coco.py --dataset-root .\datasets\visdrone_person_yolo_pilot --split test --output-dir .\outputs\evaluations\pilot_standardized --device cpu
+```
+
+The script evaluates YOLO11s, Faster R-CNN, and SSD on the same split and saves:
+
+```text
+outputs/evaluations/pilot_standardized/<split>/
+  ground_truth_coco.json
+  yolo11s_predictions_coco.json
+  faster_rcnn_predictions_coco.json
+  ssd_predictions_coco.json
+  metrics_standardized.csv
+  summary.json
+  prediction_images/
+```
+
+The standardized metrics include precision, recall, F1-score, mAP@0.5, mAP@0.5:0.95, mean inference time, and FPS.
+
+A lightweight summary of the standardized pilot evaluation is tracked in:
+
+```text
+experiments/standardized_coco_pilot_results.md
+```

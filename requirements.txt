@@ -2,3 +2,4 @@ Pillow
 ultralytics
 torch
 torchvision
+pycocotools
