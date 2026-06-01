@@ -1,0 +1,37 @@
+# Raw and converted datasets
+VisDrone/
+datasets/
+
+# Experiment outputs
+outputs/
+runs/
+weights/
+checkpoints/
+
+# Model artifacts
+*.pt
+*.pth
+*.onnx
+*.engine
+*.tflite
+*.mlpackage
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+
+# Notebooks and local tooling
+.ipynb_checkpoints/
+.sixth/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
