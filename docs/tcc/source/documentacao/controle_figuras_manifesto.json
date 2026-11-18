@@ -1,0 +1,257 @@
+[
+  {
+    "imagem": "000001.png",
+    "drive_url": "https://drive.google.com/file/d/1sGUaAEPqJZ-Pvz9HlrswYjGsTc3LgOh0/view",
+    "personagem": "PERSON_001",
+    "distancia_m": "10",
+    "angulo_graus": "0",
+    "altura_agl_m": "10.885374118382563",
+    "sha256_original": "03ba667eb40a0ebc12b7f4d7b77dec27f4462659f8594abc359b84ba7ed6ffa3",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000002.png",
+    "drive_url": "https://drive.google.com/file/d/1BNmIgVr36TZeiueRSswPAw2BI9Pl7X0m/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "10",
+    "angulo_graus": "15",
+    "altura_agl_m": "10.544632381273248",
+    "sha256_original": "eed0f56540f0c08ed5f2f7de3a382f2230366c0d2d187a698a996864aa1fa12a",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000003.png",
+    "drive_url": "https://drive.google.com/file/d/1JPv-Pg6V_7s2tEquyVgL-NlyCKJpAKzy/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "10",
+    "angulo_graus": "30",
+    "altura_agl_m": "9.54562815622695",
+    "sha256_original": "d451525d01b7c9f96dcb510f28e5623d98bbcc505d0dde0b16f49427b8833ed5",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000004.png",
+    "drive_url": "https://drive.google.com/file/d/1W6ymB0gPDZmDQnWs90RSOQWdrUQSMAG6/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "10",
+    "angulo_graus": "45",
+    "altura_agl_m": "7.956441930248039",
+    "sha256_original": "e4e74a5f76dc6facaf61db911af5df8741bab28243628dfd70f999ce2ccd860a",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000005.png",
+    "drive_url": "https://drive.google.com/file/d/1B15Z4s8G9PZusI-pCRVR_VOSDaIj9AYG/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "10",
+    "angulo_graus": "60",
+    "altura_agl_m": "5.885374118382565",
+    "sha256_original": "a346d330caf10ef0886279d2c9b6d210117912a531f9a5a6e74d67e5b0a5e508",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000006.png",
+    "drive_url": "https://drive.google.com/file/d/1eTvnFoYmOBmVt65dMYN2bsrgjasLRPIo/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "20",
+    "angulo_graus": "0",
+    "altura_agl_m": "20.885374118382565",
+    "sha256_original": "c73f888e07ce6e39f20f7adc825d5bcbbbedfe016d8a6d2dc1bcf17f0edc20f8",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000007.png",
+    "drive_url": "https://drive.google.com/file/d/1eK3_VACWA9O8oPQLraayTFdRu5QcvPwG/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "20",
+    "angulo_graus": "15",
+    "altura_agl_m": "20.20389064416393",
+    "sha256_original": "bb0cfb8ef087d94125e887c84f72ba1fac4209c3defdbdd10336b1ff79644a86",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000008.png",
+    "drive_url": "https://drive.google.com/file/d/1ISkMmWARVhm1RTtcuSwuOB8YN5vl1rQV/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "20",
+    "angulo_graus": "30",
+    "altura_agl_m": "18.205882194071336",
+    "sha256_original": "3ceb8a257bb4f8f0728fd73b696fb37520c0a823292baf2d069d07da9db88657",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000009.png",
+    "drive_url": "https://drive.google.com/file/d/1anMzFd0ytHvzuXJUqHzZzQ3JWaM5xafd/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "20",
+    "angulo_graus": "45",
+    "altura_agl_m": "15.027509742113514",
+    "sha256_original": "071700cd0660a59e31cbb39653542c4cb48d877ee07a019b4490d9a506ce8cf3",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000010.png",
+    "drive_url": "https://drive.google.com/file/d/1yjoFWnduWlgz4fMiWx8R94Qu_2QxP9qz/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "20",
+    "angulo_graus": "60",
+    "altura_agl_m": "10.885374118382565",
+    "sha256_original": "ff74681d6b56049ee69295fd375abfe98ae8d4cb301a6fc02fbb91f26a4a653d",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000011.png",
+    "drive_url": "https://drive.google.com/file/d/1x5okCtYtz6fL5hHzvOFJkhGA6hZx-lo9/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "40",
+    "angulo_graus": "0",
+    "altura_agl_m": "40.885374118382565",
+    "sha256_original": "04fdfd1c832ce43567c4ae210d373c1af4148fbf0d69caac5f076eb3a9f1e3dc",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000012.png",
+    "drive_url": "https://drive.google.com/file/d/11du0q_NURI8K9f6V8QJPNrdyhz_gzyej/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "40",
+    "angulo_graus": "15",
+    "altura_agl_m": "39.522407169945296",
+    "sha256_original": "232bdb35248a0b21284400d56478be91051f49cf97710ea74e16038afcba486e",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000013.png",
+    "drive_url": "https://drive.google.com/file/d/1Wgz5NpK4xR_aADiSAj__du9Xg0mf1Ypn/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "40",
+    "angulo_graus": "30",
+    "altura_agl_m": "35.526390269760114",
+    "sha256_original": "59a1e9d52f50f2bc40f3cb595cdc5838135da5754bfe2364821d4265937e4d09",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000014.png",
+    "drive_url": "https://drive.google.com/file/d/1Q8F28yauBvQ3Ot9QXRuslhs-EUlQ3TIG/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "40",
+    "angulo_graus": "45",
+    "altura_agl_m": "29.169645365844467",
+    "sha256_original": "aeeb303c758e8a43d164e9e3db75f8eaf65757d65558673610e1cd7e3dfc7315",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  },
+  {
+    "imagem": "000015.png",
+    "drive_url": "https://drive.google.com/file/d/1AokUQdwNkddsjflxY_j8jsAjxd2O1mye/view?usp=drivesdk",
+    "personagem": "PERSON_001",
+    "distancia_m": "40",
+    "angulo_graus": "60",
+    "altura_agl_m": "20.88537411838257",
+    "sha256_original": "1df13df8f945f77e6791feadb0ea379e9ac7da09f4f3a1b0da7967a77ffc6309",
+    "recorte_xyxy": [
+      810,
+      415,
+      1110,
+      665
+    ],
+    "imagem_usada_para": "ilustracao_documental",
+    "auditoria_formal": "PENDENTE"
+  }
+]

@@ -1,39 +1,40 @@
-\chapter[Introdução]{Introdução}
+\chapter{Introdução}
+\section{Contextualização}
+Reconhecer uma pessoa em uma imagem aérea depende das informações que chegam à câmera. A mesma pessoa pode ocupar uma região pequena do quadro, aparecer parcialmente encoberta ou apresentar uma silhueta bastante diferente quando observada de cima. Por esse motivo, avaliar um detector apenas por uma porcentagem global não esclarece em quais condições ele deixa de encontrar os alvos.
 
-Os Veículos Aéreos Não Tripulados (VANTs), também conhecidos como drones ou Aeronaves Remotamente Pilotadas (ARP), têm sido amplamente utilizados em diferentes aplicações civis e institucionais, incluindo monitoramento em tempo real, sensoriamento remoto, busca e resgate, segurança, vigilância e inspeção de infraestrutura civil \cite{SREENATH2020656, drone_monitoring}. Essas plataformas possibilitam a obtenção de imagens aéreas de forma ágil e com ampla cobertura espacial, favorecendo atividades que demandam observação contínua de grandes áreas ou de regiões de difícil acesso. Além disso, podem operar com câmeras, sensores e dispositivos de geolocalização, contribuindo para a geração de dados atualizados e para a automação de tarefas baseadas em análise visual.
+O problema aparece em pesquisas sobre visão computacional aplicada a aeronaves remotamente pilotadas. O benchmark VisDrone destaca desafios de escala, oclusão e variação de pose nas imagens aéreas \cite{drone_detection}. A simulação oferece uma forma de investigar essas condições com posições de câmera e alvos registradas. Em vez de depender exclusivamente das diferenças encontradas em cenas prontas, é possível produzir séries nas quais o mesmo personagem é observado de pontos de vista previamente definidos.
 
-Com o crescimento do uso de drones em diferentes cenários, ampliaram-se também as demandas relacionadas à segurança e ao monitoramento automatizado. Nesse contexto, a análise de imagens aéreas por técnicas de Visão Computacional constitui uma abordagem relevante para apoiar a identificação de pessoas em áreas sensíveis ou de acesso controlado. Segundo \citeonline{szeliski2010}, a Visão Computacional busca desenvolver métodos capazes de extrair informações semânticas a partir de dados visuais, sendo aplicada em tarefas como detecção, segmentação e reconhecimento de padrões.
+Essa possibilidade orienta o presente trabalho. O estudo utiliza imagens do Unreal Engine 5.4.4 para avaliar cinco ângulos off-nadir em três distâncias câmera--pelve. A análise principal compara observações do mesmo alvo, preservando sua pose dentro de cada série. Um acervo complementar, com cenas urbanas e florestais, permite examinar como os detectores se comportam quando há maior variação de enquadramento e visibilidade.
 
-Tal aplicação é relevante porque a presença humana em regiões delimitadas pode representar um evento de interesse para fins de vigilância, controle de acesso, prevenção de incidentes ou apoio à tomada de decisão \cite{drone_monitoring}. Nesse sentido, a integração entre sistemas embarcados em VANTs e algoritmos inteligentes amplia significativamente a capacidade de monitoramento automatizado \cite{drone_monitoring}. Além disso, abordagens baseadas em Redes Neurais Convolucionais, fundamentadas nos avanços do Aprendizado Profundo discutidos por \citeonline{lecun2015} e \citeonline{goodfellow2016}, têm sido amplamente empregadas em tarefas de detecção visual, inclusive em bases e desafios com imagens capturadas por drones \cite{drone_detection, zhu2021visdrone}.
+\section{Problema de pesquisa}
+A pergunta central é: \textbf{como a detecção de pessoas varia entre ângulos de captura de imagens aéreas sintéticas quando a distância tridimensional câmera--pelve é mantida em valores definidos pelo protocolo?} Como questões complementares, investiga-se se a resposta angular se mantém a 10, 20 e 40 m, se ela é semelhante nos dois detectores e em que medida o padrão observado no controle acompanha os resultados de cenas completas.
 
-Entretanto, a detecção de pessoas em imagens aéreas constitui uma tarefa desafiadora. Em comparação com imagens convencionais, os alvos humanos costumam aparecer em tamanho reduzido, sob diferentes ângulos de visão, com variação de escala, iluminação e complexidade de fundo. Esses desafios estão diretamente relacionados ao problema de detecção de pequenos objetos, discutido em bases aéreas como o VisDrone \cite{zhu2021visdrone}. Também se relacionam às diferenças entre arquiteturas de detecção, como YOLO \cite{redmon2016yolo}, Faster R-CNN \cite{ren2015faster} e SSD \cite{liu2016ssd}, que adotam estratégias distintas para localização e classificação de objetos.
+Adota-se a hipótese de trabalho de que a resposta ao ângulo depende da distância e do detector. Uma vista favorável a curta distância pode continuar apresentando omissões quando o alvo ocupa menos pixels. A análise considera essa hipótese por meio de contagens e métricas por condição, sem pressupor um único ângulo adequado a todos os cenários.
 
-A literatura da área mostra que métodos clássicos de reconhecimento de padrões vêm sendo progressivamente substituídos por abordagens baseadas em Aprendizado Profundo, especialmente por Redes Neurais Convolucionais, em razão de sua capacidade de extrair automaticamente características relevantes das imagens e alcançar resultados superiores em tarefas de detecção e classificação visual \cite{lecun2015, goodfellow2016}. Nesse contexto, o desempenho desses modelos depende fortemente da arquitetura utilizada, da qualidade dos dados e das estratégias de treinamento adotadas.
-
-No caso das imagens aéreas, diferentes arquiteturas podem apresentar comportamentos distintos diante das dificuldades impostas por pequenos objetos, variações de perspectiva e cenários visuais complexos. Dessa forma, a escolha de modelos adequados para esse tipo de aplicação torna-se uma questão relevante tanto do ponto de vista técnico quanto acadêmico, especialmente quando se busca equilibrar desempenho de detecção e eficiência computacional. Nesta pesquisa, essa comparação será realizada considerando modelos representativos de diferentes abordagens: YOLO11s, como detector moderno de uma etapa; Faster R-CNN ResNet-50 FPN, como detector de duas etapas; e SSD300 VGG16, como linha de base clássica \cite{ultralytics_yolo11_docs, ren2015faster, liu2016ssd, torchvision_models}.
-
-Diante desse cenário, este trabalho adota como tema a avaliação de modelos de detecção de pessoas para monitoramento de áreas restritas em imagens aéreas. O problema de pesquisa que orienta o estudo pode ser expresso pela seguinte questão: quais modelos de detecção de pessoas apresentam melhor desempenho para o monitoramento de áreas restritas em imagens aéreas, considerando métricas de qualidade de detecção e eficiência computacional? Parte-se do pressuposto de que diferentes arquiteturas de detecção apresentam desempenhos distintos nesse cenário, em razão das características específicas das imagens aéreas e das limitações inerentes aos modelos empregados.
-
-A justificativa para a realização desta pesquisa está associada, em primeiro lugar, à sua relevância técnica, uma vez que a comparação entre diferentes modelos de detecção pode auxiliar na identificação de abordagens mais adequadas para aplicações de monitoramento baseadas em imagens aéreas. Além disso, o estudo possui relevância acadêmica, pois contribui para a compreensão do desempenho de modelos de Visão Computacional em um domínio específico, caracterizado por desafios como pequenos objetos, variação de perspectiva, ruído, oclusão e ambientes visualmente complexos. Também se destaca a relevância prática do tema, considerando que sistemas de monitoramento automático podem apoiar futuras aplicações em contextos que demandem controle visual mais eficiente de espaços restritos, como instalações industriais, áreas institucionais e regiões de acesso controlado.
-
-Assim, este trabalho propõe a análise comparativa de modelos de detecção de pessoas em imagens aéreas, buscando identificar suas potencialidades e limitações no contexto de monitoramento de áreas restritas. Para isso, serão consideradas métricas amplamente utilizadas em detecção de objetos, como precisão, recall, F1-score, IoU, mAP e tempo de inferência, permitindo uma análise objetiva do desempenho de cada abordagem \cite{everingham2010pascal, lin2014microsoft}.
+O ângulo off-nadir descreve o afastamento da direção de observação em relação à vertical descendente. Zero grau corresponde à vista diretamente de cima; ângulos maiores representam vistas mais oblíquas. A análise considera o ângulo de captura e a distância entre a câmera e o personagem, mantendo uma referência geométrica comum entre as condições avaliadas. A definição dessa distância e sua relação com a altura da câmera em relação ao solo são detalhadas na metodologia.
 
 \section{Objetivos}
+\subsection{Objetivo geral}
+Avaliar a variação da detecção de pessoas em imagens aéreas sintéticas em função do ângulo de captura, considerando diferentes distâncias câmera--pelve e dois detectores com pesos originais pré-treinados no COCO.
 
-Esta pesquisa tem como propósito central avaliar modelos de detecção de pessoas aplicados ao contexto de imagens aéreas voltadas ao monitoramento de áreas restritas. Para melhor delimitar esse propósito, apresentam-se, a seguir, o objetivo geral e os objetivos específicos do trabalho.
+\subsection{Objetivos específicos}
+\begin{enumerate}
+\item Caracterizar os mapas, as condições de captura e os metadados de geometria e visibilidade.
+\item Descrever o experimento principal com cinco ângulos, três distâncias e um alvo elegível por imagem.
+\item Quantificar acertos, falsos positivos e omissões em cada combinação de ângulo e distância.
+\item Comparar YOLO11s e Faster R-CNN por precisão, recall, F1 e AP sob um protocolo de avaliação comum.
+\item Analisar os resultados do acervo observacional como contribuição complementar sobre diferentes cenários sintéticos.
+\item Documentar a implementação, a origem dos dados e as condições necessárias para repetir a análise.
+\end{enumerate}
 
-\subsection{\textit{Objetivo Geral}}
+\section{Justificativa e contribuição}
+A posição de captura faz parte do processo que produz a imagem analisada pelo detector. Conhecer a variação do desempenho entre posições ajuda a interpretar falhas que uma média global pode esconder. O recall informa a proporção de pessoas encontradas, mas a precisão e os falsos positivos são necessários para avaliar a qualidade das previsões produzidas.
 
-Avaliar modelos de detecção de pessoas aplicados ao monitoramento de áreas restritas em imagens aéreas, comparando seu desempenho com base em métricas de qualidade de detecção e eficiência computacional.
+O experimento controlado constitui a contribuição principal. Seu desenho explicita o alvo observado, a distância utilizada e o número de referências por condição. O acervo observacional tem outra função: amplia a descrição para cinco mapas e permite identificar situações em que os resultados do controle não se repetem. A combinação dessas duas perspectivas evita tratar uma cena simplificada como representação de toda situação aérea.
 
-\subsection{\textit{Objetivos Específicos}}
+O estudo também registra as condições da implementação. Os pesos originais permanecem fixos, os parâmetros de avaliação são identificados e os resultados por imagem conservam a relação com seus metadados. Essa documentação permite acompanhar a origem de uma contagem e conferir o processamento utilizado.
 
-\begin{itemize}
-    \item Realizar levantamento bibliográfico sobre Visão Computacional, detecção de objetos, detecção de pessoas e monitoramento por imagens aéreas;
-    \item Selecionar modelos de detecção de pessoas representativos de diferentes abordagens, incluindo YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16;
-    \item Definir e organizar uma base de imagens aéreas compatível com o escopo da pesquisa, tendo o VisDrone como base principal;
-    \item Aplicar os modelos selecionados à base de dados escolhida;
-    \item Avaliar o desempenho dos modelos por meio de métricas como precisão, recall, F1-score, Intersection over Union, mean Average Precision e tempo de inferência;
-    \item Comparar os resultados obtidos, identificando vantagens, limitações e adequação de cada modelo ao monitoramento de áreas restritas;
-    \item Identificar o modelo ou abordagem com melhor desempenho para o cenário analisado.
-\end{itemize}
+A tarefa computacional avaliada é a detecção da classe pessoa com localização por caixas delimitadoras, conforme o título do trabalho. A identificação dos personagens nos metadados permite acompanhar suas observações repetidas na simulação.
+
+\section{Organização do trabalho}
+O Capítulo 2 apresenta as tarefas de visão computacional, os detectores, a geometria de captura e os trabalhos relacionados. Inclui os dados sintéticos e a diferença de domínio na Seção \ref{sec:dados-sinteticos}, o Unreal Engine como instrumento de pesquisa na Seção \ref{sec:unreal-pesquisa} e a detecção de objetos pequenos na Seção \ref{sec:objetos-pequenos}. O Capítulo 3 descreve os conjuntos de dados, a implementação e o protocolo de avaliação. O Capítulo 4 discute primeiro o experimento controlado e depois as análises complementares. O Capítulo 5 reúne as conclusões.

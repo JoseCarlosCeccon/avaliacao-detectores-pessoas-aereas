@@ -1,0 +1,278 @@
+[
+  {
+    "arquivo": "main.tex",
+    "sha256": "ef80f683da107142c688e449653ec89d47c5ddb86d75f3e6df54a0ec4bebf235"
+  },
+  {
+    "arquivo": "macros.tex",
+    "sha256": "9a389463d90e13a8e440482b54bb764bdd35e8be5f9ddc6ac0bf246e39dcc91c"
+  },
+  {
+    "arquivo": "bibliografia.bib",
+    "sha256": "99b9762a7f83039e1ecc16a3686b8e6fd2e7ca5757a7867c8fef6cea421ba471"
+  },
+  {
+    "arquivo": "iftex.cls",
+    "sha256": "a4ef2eb6ab83cd3b0fa23e4f409829804e859ce5e3c97e61b0282a7a2fc44b06"
+  },
+  {
+    "arquivo": "easyReview.sty",
+    "sha256": "2a08bd8298ca75423be2cdab5641040cc020635251f00026fec8dcbff7e7f94a"
+  },
+  {
+    "arquivo": "LEIA-ME_CONTINUIDADE.md",
+    "sha256": "0b9442f67cbcdfde0f603f86a530c55280ff66359fd40a13af01b781f127ef2d"
+  },
+  {
+    "arquivo": "textuais/introducao.tex",
+    "sha256": "f31f83c9c173d88a1193df78289d2a85aa0ef04807ad0da5b3f0a7a48032d32c"
+  },
+  {
+    "arquivo": "textuais/ref_teorico.tex",
+    "sha256": "b7b0bcf3ecace7ce1e80d5f66f9b23e4b9d825874b0cfcdc5b741aaeb5e6df93"
+  },
+  {
+    "arquivo": "textuais/metodologia.tex",
+    "sha256": "8d2f64c18da8c1c5b0fbe6ca9fd5907af92e2ee7dcd9bd4e3b5c3940a04d5034"
+  },
+  {
+    "arquivo": "textuais/resultados_preliminares.tex",
+    "sha256": "7a4c75aa7251197c7fafc078059d7777eb887b0e03e1df2b1c3a22dd5ad5b570"
+  },
+  {
+    "arquivo": "textuais/conclusao.tex",
+    "sha256": "c76b610adbb391128878f53f08c25ae342fcbbcf7d85bcd05389939d02722583"
+  },
+  {
+    "arquivo": "pre_textuais/resumo.tex",
+    "sha256": "0493abe2582dd20f2cd37d93793b2d978f169e612dd6b8939416faf061959cfd"
+  },
+  {
+    "arquivo": "pre_textuais/siglas.tex",
+    "sha256": "35ad950392491effe271c8219bb3d9b54f6ef128115364217b65e8b2dfca5dc1"
+  },
+  {
+    "arquivo": "pre_textuais/simbolos.tex",
+    "sha256": "4ed4b20dab38e0623ad1740724e39265aa21ab9a4b0666cc64bb7b924baeec53"
+  },
+  {
+    "arquivo": "documentacao/auditoria_visual_planejada.csv",
+    "sha256": "b487dbd48706f1fa177b939a1d91e23144a9fc0c69409045db1a1cf5c53cd5b0"
+  },
+  {
+    "arquivo": "documentacao/CONFERENCIA_AMPLIACAO_CONTROLE.json",
+    "sha256": "02a2bb18516cf3b0f332aac6b0618ddf22fb6290f8606244fae8b8a8f14594b5"
+  },
+  {
+    "arquivo": "documentacao/controle_agregado_distancia.csv",
+    "sha256": "962a75ba6f42621ceea9f6fb13f856e98991aa7efd0f5dff9eaf6cc242345dc5"
+  },
+  {
+    "arquivo": "documentacao/controle_figuras_manifesto.json",
+    "sha256": "658b8230413bc7e67c2b3bee1f8913f6c861c125aa33e4fdda881b84d5a6c966"
+  },
+  {
+    "arquivo": "documentacao/controle_metadata_15_ilustracoes.csv",
+    "sha256": "1722c4071e4281060df66d69799299ce35208b6e75706de1810593ca1ef6dd78"
+  },
+  {
+    "arquivo": "documentacao/controle_originais_conferido.csv",
+    "sha256": "a4189e9256eb52d17404c62ae9b0dc179aacd3bf0dcd46d3d23c17fd8c8d0519"
+  },
+  {
+    "arquivo": "documentacao/FIGURAS_CONTROLE.md",
+    "sha256": "e3639af8d12522f25929bb841643252f78a249c148b48ce0064918165bc4216b"
+  },
+  {
+    "arquivo": "documentacao/fontes_drive.json",
+    "sha256": "9ad23cb8dfdd1fbcc463a84b3e131fbcd7bfc413839f68959bcc72f26a216d8c"
+  },
+  {
+    "arquivo": "documentacao/gerar_figuras_controle.py",
+    "sha256": "fea28b68d49b713c1f145c8a6ecfe031735ccc575df4228855cb0b52d0b8f1a2"
+  },
+  {
+    "arquivo": "documentacao/REGISTRO_CONTINUIDADE.md",
+    "sha256": "347ec312825d0f92cb390bda59a3716e4f14f9330cce6582ceafc932065675b3"
+  },
+  {
+    "arquivo": "documentacao/resumo_modelos_origem.csv",
+    "sha256": "ee07077784722d3a6774bd75fb7adaa2d9d46479aaad6b65826f826ffe78e081"
+  },
+  {
+    "arquivo": "documentacao/versoes_ambiente_origem.txt",
+    "sha256": "053fb7e275cf5cd1a2193c2fb3e845a135c27eebf851758f1c8ee6334901e45a"
+  },
+  {
+    "arquivo": "codigo_consultado/analyze.py",
+    "sha256": "77606b108a031a53fd2fa58272554a7258d2865b12c5d4738665a7ac86824300"
+  },
+  {
+    "arquivo": "codigo_consultado/executar_testes_tcc.py",
+    "sha256": "e7fe26bc3fb0cb046b3586417dd016ffc286b3e7cf90a671dbabcfe142cb4e07"
+  },
+  {
+    "arquivo": "codigo_consultado/faster_core.py",
+    "sha256": "62dcd92d642a57a53f25113c022df88577115f792320eb2dbca6b261e2005a4a"
+  },
+  {
+    "arquivo": "figuras/logoifes.png",
+    "sha256": "4ed09b421202792d4a235fb3ffad9661ac36229713a59fd099b2f49391d4c5ea"
+  },
+  {
+    "arquivo": "figuras/geometria_referencia_pelve.tex",
+    "sha256": "5887dbeb7be7f86ece100db82c6ef9a5614bb27591b7ed7f0189c5d916fec093"
+  },
+  {
+    "arquivo": "figuras/recall_angulo_originais.png",
+    "sha256": "c8adf92a2a09ffb652730132dcbbdeab758a4e8ae9569d80957411b37bc69faf"
+  },
+  {
+    "arquivo": "figuras/exemplo_urbano_documentado.png",
+    "sha256": "c11cf14e753c02e88ea137d7772d9e9dcd26d567567c3036a93595f87c073371"
+  },
+  {
+    "arquivo": "figuras/floresta_mapa_documentada.png",
+    "sha256": "145cb6a31b64be1aeb4d089fc2b37e54416ec7f499745d1721955983ecf6969a"
+  },
+  {
+    "arquivo": "figuras/floresta_centrada_documentada.png",
+    "sha256": "59ed9840a8938bf12ac21bd380223298c48c13531ddb373e0fd0702415d3be36"
+  },
+  {
+    "arquivo": "figuras/floresta_espalhada_documentada.png",
+    "sha256": "e1e80f29cc59f5999720ac99df1c0fc495393136f6763f682317715a6755555b"
+  },
+  {
+    "arquivo": "figuras/floresta_baixa_documentada.png",
+    "sha256": "86140de960aff0531d8a394f5d8e831b0b95ca946a3ec3f64a1bada2fb2a78d0"
+  },
+  {
+    "arquivo": "figuras/off_nadir_eusi.png",
+    "sha256": "7ea6dab005daa6ec43668c312d40447dcae94e15a20bcdcd0116743fc4ac5512"
+  },
+  {
+    "arquivo": "figuras/controle_contexto_cena.pdf",
+    "sha256": "1c18ce9912cbf7b4f9eaa60ae5fe60a2f4e1472e30df9074f2c8f1575542b870"
+  },
+  {
+    "arquivo": "figuras/controle_serie_15_vistas.pdf",
+    "sha256": "0cc627a3fdca7961eb9e6a8a9d55e98e5a75c2f60a82b880630f1595ffff91e7"
+  },
+  {
+    "arquivo": "figuras/controle_recall_curvas.pdf",
+    "sha256": "87888160f94d4d4375aff8ef15864e7809c779e18625f6adaaf9205baeb5e21d"
+  },
+  {
+    "arquivo": "figuras/controle_exemplos_predicoes.pdf",
+    "sha256": "97e4cb76527545ac76ae84321c1fc7b2b6b0515a389ecda5d6fb963cdd1d440b"
+  },
+  {
+    "arquivo": "figuras/controle_f1_fp_celulas.pdf",
+    "sha256": "82f44608688dbd72aeebec9c87fc4d5b8b078f047118a486160def276a966365"
+  },
+  {
+    "arquivo": "figuras/controle_contagens_distancia.pdf",
+    "sha256": "f31f69c58a6e2a5cb5aaffc89e3f540ee701503badcf1820a90298d1580be721"
+  },
+  {
+    "arquivo": "figuras/controle_metricas_globais.pdf",
+    "sha256": "5d7afe347cd2e5a841caf409d87f1e03a4309461254ebf0621b7e0fc697b9c6f"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000001_contexto.png",
+    "sha256": "1dec4ad828fdda2e8dcb44101c2286786e5cc22e2dfa9c375555d1abb6a86a3c"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000001_recorte.png",
+    "sha256": "aa070bb5f0ae6493c85be12e7f05b32fae55a50d3f0778cfed8a8abab52a64b5"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000002_recorte.png",
+    "sha256": "0a52e46837aa6a94eb84a233da8ad520c4b0eecf2c148cffe58ed503c434a2ce"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000003_recorte.png",
+    "sha256": "3bd8be4753f16a0248fa1fe70dd3fc7123b56d887c175bde0adbbcf58be047a3"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000004_recorte.png",
+    "sha256": "12a078bc7f97273f35fb9cdab0b6bcdfcf8ebab117a56241faab39c84a08d1ea"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000005_contexto.png",
+    "sha256": "0c8ca18c104459a6b1d1e4039711fe4d2f52627c9b657eba2aa77f4448665793"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000005_recorte.png",
+    "sha256": "d05dc4b8ae5f608ad36ce923d13f954245f655ae823a808e3427eb999ad09191"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000006_recorte.png",
+    "sha256": "79057d2f4049ae8e26b125d44eaeb7d878859f3642e73bd7fda71ec697948ded"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000007_recorte.png",
+    "sha256": "6bacc6f1cd0a5272af10a263884a157c3f4497fed6ed5ed4e07be0204bb6ca34"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000008_recorte.png",
+    "sha256": "79e638612fe8a8927c5052ff93e0c96cb7830dd9ddb2d1442b225a341b678919"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000009_recorte.png",
+    "sha256": "69eadded91f14df09080e98aaa7fd289980d8781d92ed851cec94707aac87f54"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000010_recorte.png",
+    "sha256": "edbd8fa48c7b79179cc64fa2527a0572fad9e80d87b7e0a7bd175fcbedf8aa88"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000011_recorte.png",
+    "sha256": "b89dd803bb118eb852c20334656d5f7e2cee0bb19c98660f3e55a143b36a8320"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000012_recorte.png",
+    "sha256": "4b7e0dc45e68fc53c580c8f827a738539eced1c79a3d1f57cef548c215c881db"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000013_recorte.png",
+    "sha256": "070b2a222639c1bf7387de796c2e5b1e46808875256c0de0e999db5f7e47f949"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000014_recorte.png",
+    "sha256": "bfe1b9a3fb1dd8f7f6a378aed088e6e55aa59e7c616e306c48a63bc6a92c1328"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/000015_recorte.png",
+    "sha256": "3c7f87a44bb520b58cc67ce582cb20a5af635972f5d0d0a6da87fd123d32b77e"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/pred_yolo_10_0.png",
+    "sha256": "f953174903148c5f29d809616ea9bd23de2365ecdc590c66d0af1483692b7c2f"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/pred_yolo_10_60.png",
+    "sha256": "7f43d30ce4a7417eef6f03298a2f25f3470ccff349e6684cb847a07d600b8544"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/pred_yolo_20_0.png",
+    "sha256": "1c93bdfda9fed019497088b0dabeef828cfed277d7e798c658f613bb0371043b"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/pred_yolo_20_60.png",
+    "sha256": "0577861adf0768865dd0aae184d4cb341e0fb5970f05a2e8c4f541a8213c8cec"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/pred_yolo_40_0.png",
+    "sha256": "5983cbe2589cfcbf70b1b9556e2d7a2214e32d1c63e6b699e1f2b07295faf8fd"
+  },
+  {
+    "arquivo": "figuras/controle_fontes/pred_yolo_40_60.png",
+    "sha256": "72799ff22b343ea7deea4f92cb23ba1d4ccf9d27441b5df2b5af6d2e2d26be57"
+  },
+  {
+    "arquivo": "LICENSE_modelo_IFTeX",
+    "sha256": "27597ab18210ecf1285ec984cb153df71cf17119347a3fb5ca52b15eccba53f6"
+  }
+]

@@ -1,3 +1,22 @@
-\chapter[Conclusão]{Conclusão}
+\chapter{Conclusão}
+\section{Resposta à questão de pesquisa}
+O trabalho avaliou ângulos de captura de imagens aéreas sintéticas utilizando YOLO11s e Faster R-CNN ResNet-50 FPN V2 com pesos originais COCO. O experimento principal reuniu 375 imagens, com 25 atores, cinco ângulos off-nadir e distâncias câmera--pelve de 10, 20 e 40 m. A comparação preservou o alvo e a pose dentro de cada série e utilizou as mesmas referências para os dois detectores.
 
-É a constatação da pesquisa, elucidando se foi ou não alcançado o objetivo proposto. Sugere-se que sejam feitas recomendações finais para implementação do assunto enfocado e, também, a realização de pesquisas adicionais. 
+Nas condições controladas, o recall aumentou ou permaneceu estável com a obliquidade. Em 10 m, ambos os modelos atingiram 100\% de recall em $45^\circ$ e $60^\circ$. Em 20 m e $60^\circ$, o YOLO11s alcançou 100\% e o Faster R-CNN, 92\%. Em 40 m e $60^\circ$, os valores foram 60\% e 68\%. Portanto, $60^\circ$ apresentou o maior recall entre os ângulos avaliados em cada distância, com empate em 10 m. O alcance dessa conclusão é o desenho sintético estudado.
+
+A distância também modificou a resposta. A 40 m, nenhum dos modelos recuperou alvos de $0^\circ$ a $30^\circ$, embora essas vistas tenham produzido acertos em distâncias menores. O resultado responde à pergunta de pesquisa ao mostrar que a análise do ângulo depende da condição de distância. Manter $d$ fixa não manteve a AGL nem a projeção do corpo constantes; essas mudanças fazem parte da geometria do protocolo.
+
+\section{Comparação dos detectores e contribuição complementar}
+No agregado controlado, o Faster apresentou maior recall e F1, enquanto o YOLO apresentou maior precisão e menos FP. No subconjunto comum do acervo, a vantagem de recall do Faster também veio acompanhada de mais previsões incorretas. O AP comum e os tempos registrados acrescentam critérios distintos à comparação. Assim, não há superioridade de um modelo em todas as métricas e condições.
+
+O acervo observacional constitui uma contribuição complementar. Seus cinco mapas permitem verificar o comportamento dos detectores em cenas sintéticas com distribuição de pessoas e visibilidade variadas. Os resultados florestais evidenciam omissões expressivas e mostram que uma condição favorável no controle não garante bom desempenho em cenas completas. As diferenças entre mapas descrevem associações; elas não isolam a vegetação, a distância ou o agrupamento como causas únicas.
+
+A contribuição do TCC está na avaliação angular por condição de captura, com a origem dos valores documentada em tabelas, metadados e scripts.
+
+
+\section{Limitações da aquisição e aplicação a imagens reais}
+O estudo utiliza exclusivamente imagens renderizadas e não inclui avaliação com câmeras reais. A câmera virtual fornece condições geométricas registradas, mas não houve calibração com um equipamento físico nem comparação das respectivas características de imagem. Assim, a referência a uma câmera de boa qualidade expressa uma condição favorável de aquisição, e não equivalência demonstrada de nitidez, aparência ou desempenho de detecção.
+
+A ausência de avaliação real limita a transferência das conclusões para fotografias e operações de drone. Ruído do sensor, foco, exposição, desfoque, compressão e condições ambientais podem alterar a informação disponível ao detector. Esses fatores não foram isolados ou quantificados neste experimento. Mesmo com degradações de aquisição reduzidas, permanecem diferenças entre a diversidade e a aparência dos elementos renderizados e reais \cite{tobin2017domain,tremblay2018synthetic}.
+
+Os resultados sobre ângulo e distância permanecem circunscritos aos conjuntos sintéticos avaliados. Uma avaliação posterior com imagens reais e condições de captura conhecidas permitiria examinar se a direção e a magnitude das diferenças observadas se mantêm. Os valores de recall medidos nesta pesquisa não constituem estimativas de desempenho para uma câmera real específica.

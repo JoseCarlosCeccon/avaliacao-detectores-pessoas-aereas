@@ -1,14 +1,9 @@
 %% Macros de dados do documento
 \autor{José Carlos Ceccon Neto}
-\titulo{Avaliação de Modelos de
-Detecção de Pessoas para
-Monitoramento de Áreas
-Restritas em Imagens
-Aéreas
-}
+\titulo{Avaliação de ângulos de captura para detecção de pessoas em imagens aéreas sintéticas}
 \instituicao{Instituto Federal do Espírito Santo}
 \curso{Bacharelado em Sistemas de Informação}
-\local{Cachoeiro de itapemirim}
+\local{Cachoeiro de Itapemirim}
 \data{2026}
 
 
@@ -16,46 +11,39 @@ Aéreas
 \preambulo{Trabalho de Conclusão de Curso apresentado à Coordenadoria do Curso de Sistemas de Informação do
 Instituto Federal de Educação, Ciência e Tecnologia do Espírito Santo, como requisito parcial para a obtenção do título de Bacharel em Sistemas de Informação.}
 
-\orientador[Orientador][Prof. Dr.]{Beltrano}[de Tal]{Instituto Federal do Espírito Santo}
-\coorientador[Coorientadora][Profa. Dra.]{Beltrana}[de Tal]{Instituto Federal do Espírito Santo}
+\orientador[Orientador][Prof. Dr.]{Ricardo Maroquio}[Bernardo]{Instituto Federal do Espírito Santo}
+% Não se presume existência de coorientação.
 
-\examinadori{Profa. Dra. Fulana de Tal}{Instituto Federal do Espírito Santo}{Examinadora}
-\examinadorii{Prof. Dr. Cicrano de Tal}{Instituto Federal do Espírito Santo}{Examinador}
-
-\approvaldate{01}{Agosto}{2026}
+% Banca e data de aprovação serão cadastradas somente após sua definição.
 
 % Palavras-chaves
-\palavraschave{Palavra Chave 1}[Palavra Chave 2][Palavra Chave 3][Palavra Chave 4][Palavra Chave 5]
-\keywords{keyword 1}[keyword 2][keyword 3][keyword 4][keyword 5]
+\palavraschave{Detecção de Pessoas}[Imagens Aéreas Sintéticas][Ângulo Off-Nadir][Distância Câmera--Pessoa][Visão Computacional]
+\keywords{People Detection}[Synthetic Aerial Imagery][Off-Nadir Angle][Camera-to-Person Distance][Computer Vision]
 
-% Ficha catalográfica
-\fichabiblioteca{
-    Dados Internacionais de Catalogação-na-Publicação (CIP) \\
-    (Biblioteca Nilo Peçanha do Instituto Federal do Espírito Santo)
-}
-\fichaautor{Elaborada por XXXXXXXXXXXXXXXXXXXXX – CRB-X/ES - XXX}
-\fichatags{
-    1. Sistemas de Informação.  
-    2. Redes de Computadores – Protocolos.  
-    3. Segurança da Informação – Criptografia.  
-    4. Computação em Nuvem – Serviços.  
-    5. Internet das Coisas (IoT).  
-    6. Engenharia de Software – Desenvolvimento de Sistemas.  
-    I. Borges, Everson Scherrer.  
-    II. Instituto Federal do Espírito Santo.  
-    III. Título.
-}
-
-\cutter{X999y}
-\cdd{000.00}
+% A ficha catalográfica e os dados de aprovação não são impressos nesta versão.
 \selectlanguage{brazil}
 
 % Arial (para usar times-new-roman, comente as três linhas abaixo)
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
 \renewcommand{\ABNTEXchapterfont}{\bfseries}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
 % Comandos para revisar o texto
 \usepackage{easyReview} 
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{placeins}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black,
+pdftitle={Avaliação de ângulos de captura para detecção de pessoas em imagens aéreas sintéticas},
+pdfauthor={José Carlos Ceccon Neto}}
+\setlength{\emergencystretch}{2em}
+\AtBeginDocument{\OnehalfSpacing}
+\AtBeginEnvironment{thebibliography}{\SingleSpacing}
+\patchcmd{\imprimirfolhaderosto}{\scriptsize}{\footnotesize}{}{}
+\lstset{numbers=none,keywordstyle=\color{black}\bfseries,
+commentstyle=\color{black},stringstyle=\color{black},frame=none,
+basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,keepspaces=true}
 
 
 %% Elementos opcionais

@@ -1,69 +1,168 @@
-\chapter[Referencial Teórico]{Referencial Teórico}
+\chapter{Fundamentação Teórica}
+\section{Classificação, detecção e identificação}
+A visão computacional procura obter informações sobre uma cena a partir de imagens. Entre suas tarefas, a classificação associa uma categoria à entrada, enquanto a detecção acrescenta a localização das instâncias encontradas \cite{szeliski2010}. Na detecção de pessoas, o resultado esperado é uma caixa para cada pessoa identificada, acompanhada da classe e de um escore de confiança.
 
-Este capítulo apresenta os principais conceitos que fundamentam a avaliação de modelos de detecção de pessoas em imagens aéreas. São abordados aspectos relacionados à Visão Computacional, ao Aprendizado Profundo, à detecção de objetos, aos desafios associados a imagens capturadas por drones, aos modelos selecionados para comparação, às bases de dados utilizadas e às métricas de avaliação.
+Essa distinção orienta a interpretação deste estudo. Classificar corretamente uma região como pessoa não basta quando a caixa está deslocada ou deixa de corresponder à referência. Da mesma forma, uma pessoa não detectada representa uma omissão, mesmo que as demais caixas da imagem estejam corretas. A tarefa não envolve reconhecimento de identidade. Os códigos dos personagens permitem acompanhar as capturas e não representam identificação biométrica.
 
-\section{Visão Computacional e Aprendizado Profundo}
+\section{Redes neurais e pesos pré-treinados}
+Redes profundas aprendem representações a partir dos exemplos utilizados no treinamento. Seus pesos são parâmetros numéricos ajustados para reduzir o erro entre previsões e referências \cite{lecun2015,goodfellow2016}. Na inferência, esses parâmetros são utilizados para produzir respostas para novas entradas. Executar a inferência não implica realizar um novo treinamento.
 
-A Visão Computacional é uma área da Computação voltada ao desenvolvimento de métodos capazes de interpretar informações visuais a partir de imagens e vídeos. Segundo \citeonline{szeliski2010}, essa área busca extrair descrições úteis do mundo real a partir de dados visuais, abrangendo tarefas como classificação, detecção, segmentação, reconstrução tridimensional e reconhecimento de padrões.
+O COCO, abreviação de \textit{Common Objects in Context}, é uma base de imagens anotadas destinada a pesquisas sobre reconhecimento e localização de objetos \cite{lin2014microsoft}. No recorte de detecção empregado pelas implementações deste trabalho, os pesos disponíveis contemplam 80 categorias, entre elas pessoa \cite{ultralytics_yolo11_docs}. A expressão pesos COCO identifica a origem do pré-treinamento, e não uma arquitetura denominada COCO.
 
-Nas últimas décadas, o avanço do Aprendizado Profundo modificou significativamente a forma como problemas visuais são tratados. Em vez de depender exclusivamente de descritores manuais, os modelos baseados em redes neurais profundas aprendem representações diretamente a partir dos dados, o que contribuiu para avanços expressivos em tarefas de reconhecimento visual \cite{lecun2015, goodfellow2016}. Nesse contexto, as Redes Neurais Convolucionais, conhecidas como CNNs, tornaram-se particularmente relevantes para imagens, pois exploram operações de convolução capazes de capturar padrões locais, como bordas, texturas, formas e estruturas mais complexas ao longo das camadas da rede \cite{lecun2015}.
+Utilizar pesos originais significa manter o aprendizado disponibilizado pelo fornecedor. A avaliação verifica como esse sistema responde ao conjunto sintético sem adaptação por novos exemplos. Um resultado baixo pode refletir diferenças entre as condições da avaliação e aquelas representadas no treinamento, mas a origem exata de uma falha não pode ser determinada apenas por essa diferença de domínio.
 
-Em aplicações de monitoramento por imagens aéreas, essas técnicas são especialmente importantes porque permitem a análise automática de grandes volumes de imagens capturadas por drones. Essa automação pode apoiar tarefas de vigilância, inspeção, busca e identificação de eventos de interesse, reduzindo a dependência de análise visual manual em cenários extensos ou de difícil acesso \cite{SREENATH2020656, drone_monitoring}.
+\section{Dados sintéticos e diferença de domínio}
+\label{sec:dados-sinteticos}
+\subsection{Geração de imagens e referências}
+Dados sintéticos são produzidos por um processo computacional que representa uma cena e gera suas observações. Em visão computacional, um ambiente tridimensional permite definir objetos, materiais, iluminação e câmera antes de renderizar a imagem. Isso oferece acesso a informações da cena que não são obtidas apenas pela inspeção de uma fotografia. \citeonline{richter2016playing} demonstram a obtenção de anotações semânticas a partir de jogos e seu uso em pesquisa de visão computacional. O interesse desse tipo de recurso está tanto na geração de referências quanto na possibilidade de organizar condições de observação.
 
-\section{Detecção de Objetos}
+Uma imagem sintética pode ser utilizada para treinar um modelo ou para avaliar um modelo já existente. São usos diferentes: no primeiro, os exemplos alteram os pesos; no segundo, as respostas de um sistema fixo são examinadas. Neste TCC, a simulação tem a segunda função. As séries controladas permitem observar o mesmo ator em posições conhecidas de câmera, sem atualizar os pesos dos detectores.
 
-A detecção de objetos é uma tarefa de Visão Computacional cujo objetivo é localizar e classificar instâncias de objetos presentes em uma imagem. Diferentemente da classificação de imagens, que atribui uma ou mais classes à imagem inteira, a detecção de objetos deve indicar onde cada objeto está localizado, normalmente por meio de caixas delimitadoras, além de atribuir uma classe e uma pontuação de confiança a cada detecção \cite{szeliski2010}.
+A referência gerada a partir da cena também depende de uma definição operacional. Conhecer a posição tridimensional de uma pessoa não determina, por si só, qual caixa deve ser avaliada na imagem. Uma caixa da parte visível e uma caixa que inclui o corpo encoberto representam convenções distintas. Por isso, a informação produzida pelo simulador precisa ser relacionada às regras de visibilidade, elegibilidade e pareamento descritas na metodologia.
 
-Em modelos modernos de detecção, a saída geralmente é composta por um conjunto de caixas delimitadoras, classes previstas e probabilidades associadas. Como um mesmo objeto pode gerar múltiplas predições sobrepostas, utiliza-se com frequência uma etapa de pós-processamento denominada \textit{Non-Maximum Suppression} (NMS), responsável por reduzir detecções redundantes e manter as caixas de maior confiança. Esse processo é amplamente empregado em detectores de uma etapa, como YOLO e SSD \cite{redmon2016yolo, liu2016ssd}.
+\subsection{Diferença de domínio entre imagens reais e sintéticas}
+O termo domínio descreve o conjunto de condições que caracteriza os dados de uma tarefa. A diferença de domínio ocorre quando as condições de aprendizagem e de aplicação não coincidem. Entre imagens renderizadas e fotografias podem variar texturas, iluminação, formas dos objetos, ruído, fundo e distribuição de poses. Por isso, o realismo visual de uma cena não assegura que suas características tenham a mesma distribuição das imagens reais \cite{tobin2017domain,tremblay2018synthetic}.
 
-Os modelos de detecção podem ser agrupados, de forma geral, em abordagens de uma etapa e de duas etapas. Detectores de uma etapa realizam diretamente a predição de caixas e classes a partir da imagem de entrada, favorecendo maior velocidade de inferência. Detectores de duas etapas, por sua vez, primeiro geram propostas de regiões candidatas e depois classificam e refinam essas regiões, como ocorre no Faster R-CNN \cite{ren2015faster}. Essa distinção é relevante para este trabalho porque o monitoramento de áreas restritas exige equilíbrio entre qualidade de detecção e eficiência computacional.
+A transferência \textit{sim-to-real} busca aplicar, no mundo real, modelos ou comportamentos aprendidos em simulação. \citeonline{tobin2017domain} investigam a randomização de aspectos da renderização para favorecer essa transferência. Na detecção de objetos, \citeonline{tremblay2018synthetic} exploram a variação de aparência, iluminação e posição na geração dos exemplos.
 
-\section{Detecção de Pessoas em Imagens Aéreas}
+Neste trabalho, os detectores utilizam pesos pré-treinados em imagens reais do COCO e são avaliados em capturas sintéticas. O objeto da análise é, portanto, sua resposta no domínio renderizado, sem treinamento para transferência \textit{sim-to-real} ou avaliação em fotografias. A diferença de domínio oferece uma hipótese para interpretar parte dos erros, mas sua contribuição não é isolada pelo experimento.
 
-A detecção de pessoas em imagens aéreas apresenta desafios específicos em comparação com imagens capturadas em perspectiva terrestre. Em imagens obtidas por drones, pessoas frequentemente aparecem com poucos pixels, em ângulos superiores, parcialmente ocluídas ou misturadas a fundos visualmente complexos. Além disso, alterações de altitude, inclinação da câmera, iluminação, densidade de objetos e movimento da plataforma aérea podem afetar diretamente o desempenho dos modelos \cite{drone_detection, zhu2021visdrone}.
+\subsection{Câmera virtual e condições favoráveis de aquisição}
+\label{sec:camera-virtual-real}
+A câmera virtual permite controlar a projeção da cena, o campo de visão, a resolução e a posição de observação. Esse controle oferece uma aproximação geométrica da formação de imagens por câmeras, sem reproduzir automaticamente toda a cadeia de aquisição de um equipamento físico \cite{szeliski2010}. Para discutir a qualidade de aquisição, pode-se tomar como referência conceitual uma câmera real bem configurada, com foco adequado, exposição apropriada e degradações reduzidas. Essa referência descreve condições favoráveis de captura; não identifica um equipamento utilizado nem comprova equivalência entre fotografias e renderizações.
 
-Esses fatores aproximam o problema da detecção de pequenos objetos, uma das tarefas mais desafiadoras em detecção visual. Objetos pequenos tendem a apresentar menor quantidade de informação discriminativa, tornando mais difícil separar a classe de interesse do fundo da imagem. Em cenários de monitoramento, esse problema é ainda mais crítico porque a não detecção de uma pessoa em área restrita pode representar uma falha operacional relevante.
+Neste estudo, as capturas têm resolução e campo de visão definidos, mas o protocolo não calibra uma lente ou um sensor real, nem mede equivalência de nitidez, ruído, faixa dinâmica ou desfoque com uma câmera física. Portanto, não se atribui ao conjunto a qualidade de uma câmera comercial específica. Mesmo uma câmera de alta qualidade pode produzir imagens com aparência e distribuição de pessoas, poses e fundos diferentes das renderizações. A diferença de domínio discutida anteriormente permanece pertinente \cite{tobin2017domain,tremblay2018synthetic}.
 
-No contexto deste trabalho, a detecção de pessoas não será analisada apenas como uma tarefa genérica de reconhecimento visual. A avaliação considera o uso potencial em monitoramento de áreas restritas, o que exige observar não somente a precisão das caixas delimitadoras, mas também a capacidade dos modelos de recuperar o maior número possível de pessoas presentes nas imagens, reduzir falsos positivos e operar em tempo compatível com aplicações práticas.
+As imagens sintéticas permitem investigar o comportamento dos detectores sob a geometria e as condições de renderização documentadas. A aplicação dos resultados a fotografias, inclusive às produzidas por câmeras de boa qualidade, constitui uma hipótese a verificar com dados reais e parâmetros de aquisição conhecidos. A aparência visual favorável de uma imagem não substitui essa avaliação.
 
-\section{Modelos de Detecção de Objetos}
+\section{Unreal Engine como instrumento de pesquisa}
+\label{sec:unreal-pesquisa}
+Um motor gráfico pode funcionar como instrumento experimental ao permitir definir a cena, produzir imagens e registrar as condições de captura. \citeonline{qiu2016unrealcv} apresentam o UnrealCV, baseado no Unreal Engine 4, para conectar ambientes virtuais a aplicações de visão computacional. O acesso programático à câmera e às informações da cena exemplifica como esses ambientes podem apoiar a construção de experimentos com condições conhecidas.
 
-Esta pesquisa considera três modelos representativos de diferentes estratégias de detecção: YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16. A escolha desses modelos permite comparar uma arquitetura moderna de uma etapa, uma arquitetura clássica de duas etapas e um baseline consolidado de uma etapa.
+A documentação do Unreal Engine 5.4 descreve recursos de Python para automatizar operações do editor \cite{epic2026python} e convenções de unidades para representar comprimentos e ângulos \cite{epic2026units}. Esses recursos apoiam a organização de rotinas de captura nas quais posições, rotações, identificadores e parâmetros de câmera são registrados. O motor produz as imagens e as informações geométricas; o protocolo de avaliação define como as previsões dos detectores são comparadas às referências.
 
-\subsection{YOLO}
+A reprodutibilidade depende do registro dos elementos que determinam a imagem: versão do motor, recursos da cena, materiais, iluminação e parâmetros de renderização e câmera. As coordenadas descrevem a geometria da captura, enquanto os demais elementos definem sua aparência. Documentar essas condições permite interpretar os resultados e estabelecer as configurações necessárias para repetir o experimento.
 
-YOLO, acrônimo de \textit{You Only Look Once}, é uma família de modelos de detecção de objetos baseada em predição direta de caixas delimitadoras e classes a partir da imagem de entrada. A proposta original apresentou a detecção como um problema de regressão única, permitindo inferência em tempo real e tornando a arquitetura atrativa para aplicações que exigem baixa latência \cite{redmon2016yolo}.
+\section{Detectores selecionados}
+\subsection{YOLO11s}
+A família YOLO organiza a detecção como predição de caixas e classes em uma arquitetura de uma etapa. O artigo de \citeonline{redmon2016yolo} apresenta o princípio da família. O YOLO11 é uma implementação posterior da Ultralytics; a variante \textit{small}, utilizada aqui, é identificada por YOLO11s e pelo arquivo \texttt{yolo11s.pt} \cite{ultralytics_yolo11_docs}. A revisão de \citeonline{khanam2024yolo11} descreve seus componentes e variantes. Para os detalhes estruturais, a configuração e os módulos oficiais complementam essa visão geral.
 
-Neste trabalho, será utilizado o YOLO11s, disponibilizado pela biblioteca Ultralytics. A escolha da variante ``s'' está relacionada ao equilíbrio entre desempenho e custo computacional, aspecto relevante para aplicações de monitoramento em que a velocidade de inferência também deve ser considerada. A documentação da Ultralytics descreve a família YOLO11 como voltada a tarefas como detecção, segmentação e classificação, com suporte a treinamento, validação, predição e exportação de modelos \cite{ultralytics_yolo11_docs}.
+A arquitetura pode ser entendida em três funções. O \textit{backbone} extrai características da imagem por convoluções e blocos de processamento. O \textit{neck} combina representações de diferentes resoluções por redimensionamento e concatenação. A cabeça de detecção produz as estimativas de localização e classe. A configuração oficial utiliza saídas P3, P4 e P5, com passos espaciais, ou \textit{strides}, de 8, 16 e 32 pixels em relação à entrada. A variante \textit{small} ajusta a profundidade e a largura dessa estrutura \cite{ultralytics2024yaml}.
 
-\subsection{Faster R-CNN}
+Os blocos C3k2 e C2PSA estão entre os componentes característicos da versão. Na implementação, C3k2 deriva da estrutura C2f e combina caminhos de características com blocos internos do tipo \textit{bottleneck} ou C3k, conforme a configuração. O C2PSA divide a representação em canais, aplica blocos de autoatenção e transformação a uma parcela e reúne as saídas. A configuração posiciona C2PSA após SPPF no \textit{backbone}. SPPF, de \textit{Spatial Pyramid Pooling--Fast}, agrega contexto por operações de agrupamento espacial \cite{ultralytics2024blocks,ultralytics2024yaml}.
 
-O Faster R-CNN é um detector de duas etapas que combina uma rede de propostas de regiões, denominada \textit{Region Proposal Network} (RPN), com uma etapa posterior de classificação e refinamento das caixas delimitadoras. Essa arquitetura reduziu a dependência de métodos externos para geração de propostas e tornou o processo de detecção mais integrado e eficiente \cite{ren2015faster}.
+\begin{table}[htb]
+\caption{Componentes do YOLO11 pertinentes à interpretação da detecção}
+\label{tab:yolo11-componentes}\centering\small
+\begin{tabularx}{\textwidth}{p{0.23\textwidth}X}
+\toprule Componente & Função na arquitetura\\\midrule
+C3k2 & Processa e combina características por caminhos parciais e blocos internos configuráveis.\\
+SPPF & Agrega informação contextual por agrupamento espacial sucessivo.\\
+C2PSA & Acrescenta autoatenção a parte dos canais antes de reunir as representações.\\
+P3, P4 e P5 & Fornecem características em três resoluções para a predição.\\
+\texttt{Detect} & Separa os ramos de regressão das caixas e de classificação.\\\bottomrule
+\end{tabularx}
+\source[Síntese da configuração e dos módulos oficiais da Ultralytics \cite{ultralytics2024yaml,ultralytics2024blocks,ultralytics2024head}.]
+\end{table}
 
-Neste trabalho, o Faster R-CNN ResNet-50 FPN será utilizado como representante de detectores de duas etapas. A presença de uma rede de pirâmide de características, ou FPN, favorece o uso de informações em múltiplas escalas, aspecto relevante para imagens aéreas nas quais pessoas podem aparecer em tamanhos variados. A implementação adotada será a disponibilizada pelo TorchVision, que oferece modelos de detecção pré-treinados e compatíveis com o ecossistema PyTorch \cite{torchvision_models}.
+A cabeça é desacoplada: os ramos de regressão e classificação possuem processamento próprio a partir das características recebidas. Ela é \textit{anchor-free}, pois não utiliza um catálogo pré-definido de caixas com larguras e alturas para representar os alvos. Ainda existem pontos de referência na grade; \textit{anchor-free} não significa ausência de coordenadas de referência. O ramo de regressão estima distribuições discretas para as distâncias até as quatro bordas. O módulo DFL (\textit{Distribution Focal Loss}) calcula seus valores esperados, utilizados na decodificação das caixas. Os escores das classes são calculados em um ramo separado \cite{ultralytics2024head}.
 
-\subsection{SSD}
+Essas características descrevem como a rede organiza a predição, sem assegurar recuperação de qualquer pessoa pequena ou parcialmente visível. A disponibilidade de três escalas e de atenção não repõe detalhes ausentes na imagem. Tampouco \textit{anchor-free} significa dispensar NMS: o executor utilizado aplica a supressão de caixas redundantes com os parâmetros informados na metodologia. O estudo mantém essa arquitetura e seus pesos originais, sem modificar blocos ou treinar uma versão específica para o acervo.
 
-O SSD, ou \textit{Single Shot MultiBox Detector}, é um detector de uma etapa que realiza predições de caixas e classes em múltiplos mapas de características. A arquitetura foi proposta com o objetivo de combinar bom desempenho de detecção com inferência eficiente, eliminando a necessidade de uma etapa separada de propostas de regiões \cite{liu2016ssd}.
+No executor consultado, a biblioteca recebe o caminho da imagem, realiza as transformações de entrada e retorna caixas, classes e escores. Os resultados da classe pessoa são preservados e relacionados aos metadados. O código também armazena o tempo observado e a identificação do arquivo de origem. A execução da biblioteca faz parte da implementação, mas não substitui a definição das referências e do protocolo de avaliação.
 
-Neste trabalho, será utilizado o SSD300 VGG16 como baseline clássico. Sua inclusão permite comparar os modelos mais recentes com uma arquitetura consolidada na literatura, contribuindo para avaliar se os ganhos obtidos por abordagens modernas são relevantes no cenário específico de imagens aéreas. Assim como o Faster R-CNN, o SSD será implementado por meio do TorchVision \cite{torchvision_models}.
+\subsection{Faster R-CNN ResNet-50 FPN V2}
+O Faster R-CNN utiliza uma rede de propostas de regiões, denominada RPN, e uma etapa que classifica e refina as propostas \cite{ren2015faster}. A ResNet-50 atua na extração das características, enquanto a FPN combina informações em diferentes escalas \cite{lin2017fpn}. A configuração avaliada é a variante ResNet-50 FPN V2 da TorchVision, com o conjunto de pesos \texttt{COCO\_V1} \cite{torchvision_models}.
 
-\section{Bases de Dados}
+O adaptador do projeto mantém o cálculo dos escores sobre as classes COCO antes de selecionar a pessoa. Essa decisão evita recalcular a confiança como se apenas pessoa e fundo existissem na saída original. Os pesos são carregados de um arquivo oficial; a seleção da classe e os limiares de pós-processamento fazem parte do sistema avaliado. O código histórico inclui outras rotinas, mas os resultados deste TCC correspondem apenas à configuração sem ajuste de pesos.
 
-A escolha da base de dados é uma decisão metodológica central em trabalhos de detecção de objetos, pois o desempenho dos modelos depende diretamente da distribuição das imagens, das classes anotadas, da qualidade das caixas delimitadoras e da proximidade entre os dados de treinamento e o cenário real de aplicação.
+As diferenças entre os dois sistemas envolvem arquitetura, pesos e transformações das bibliotecas. A comparação utiliza as mesmas imagens e referências, porém não isola o efeito exclusivo da arquitetura. Também não se presume equivalência de calibração: um escore de 0,80 pode ter comportamento diferente em cada sistema.
 
-O COCO, ou \textit{Common Objects in Context}, é uma base amplamente utilizada em tarefas de detecção, segmentação e reconhecimento visual, contendo objetos em contextos variados e anotações padronizadas \cite{lin2014microsoft}. Embora seja importante para pré-treinamento e comparação geral entre modelos, o COCO não é específico para imagens aéreas capturadas por drones, o que limita sua representatividade para o problema investigado neste trabalho.
+\section{Geometria da captura aérea}
+\subsection{Off-nadir e orientação da câmera}
+O nadir é a direção vertical para baixo. O ângulo off-nadir mede o desvio da direção de observação em relação a essa vertical. Portanto, $0^\circ$ corresponde à vista superior, enquanto valores maiores representam observações mais oblíquas \cite{hajkova2024ona}. Esse conceito se refere à geometria da cena, não à orientação horizontal ou vertical do arquivo de imagem.
 
-Por esse motivo, a base principal da pesquisa será o VisDrone. Esse conjunto de dados foi desenvolvido para desafios envolvendo imagens e vídeos capturados por drones, incluindo tarefas de detecção e rastreamento de objetos. O VisDrone apresenta cenários variados, diferentes condições de iluminação, mudanças de altitude e objetos em pequena escala, características compatíveis com o problema de detecção de pessoas em imagens aéreas \cite{zhu2021visdrone}.
+\begin{figure}[htb]
+\caption{Ângulo off-nadir medido entre a vertical para baixo e a direção de observação}
+\centering\includegraphics[width=0.88\textwidth]{off_nadir_eusi.png}
+\label{fig:off-nadir-eusi}
+\source[European Space Imaging, em \citeonline{hajkova2024ona}.]
+\end{figure}
 
-\section{Métricas de Avaliação}
+Na Figura \ref{fig:off-nadir-eusi}, a direção de $0^\circ$ é a referência vertical. As linhas de $5^\circ$, $15^\circ$ e $30^\circ$ mostram desvios crescentes em relação a ela; o ângulo é medido na posição do sensor, e não a partir do plano do solo. O satélite ilustra o conceito, que também se aplica à câmera aérea do experimento. Os valores desenhados são exemplos didáticos, distintos das cinco condições de captura avaliadas neste trabalho.
 
-A avaliação de modelos de detecção de objetos exige métricas capazes de considerar simultaneamente a localização das caixas, a classificação correta dos objetos e a confiança das predições. Entre as métricas mais utilizadas estão precisão, recall, F1-score, IoU, AP, mAP e tempo de inferência.
+A ilustração explica a definição angular, sem representar o delineamento de distância constante do controle. Nesse delineamento, a câmera muda de posição e inclinação para apontar para a pelve, mantendo a distância 3D selecionada. A relação entre essa distância, a altura AGL e a separação horizontal é detalhada na metodologia.
 
-A precisão representa a proporção de detecções corretas entre todas as detecções produzidas pelo modelo, enquanto o recall representa a proporção de objetos reais que foram corretamente detectados. Em aplicações de monitoramento, o recall possui importância especial porque falsos negativos podem indicar pessoas não detectadas em áreas sensíveis. Por outro lado, a precisão também é relevante, pois falsos positivos podem gerar alertas indevidos e reduzir a confiabilidade do sistema.
+Com o alvo centralizado, o eixo óptico acompanha a linha câmera--alvo. Em cenas com várias pessoas, cada linha de visada pode diferir desse eixo. Assim, o off-nadir da câmera não resume o ângulo de observação de todos os personagens.
 
-A métrica IoU mede o grau de sobreposição entre a caixa delimitadora prevista e a caixa real anotada. Essa medida é utilizada para determinar se uma detecção deve ser considerada correta, a partir de um limiar previamente definido. Já a métrica AP, ou \textit{Average Precision}, resume a relação entre precisão e recall ao longo de diferentes limiares de confiança. O mAP corresponde à média dos valores de AP e é amplamente utilizado em benchmarks de detecção, como PASCAL VOC e COCO \cite{everingham2010pascal, lin2014microsoft}.
+\subsection{Altura AGL e distância ao alvo}
+A altura AGL, de \textit{Above Ground Level}, corresponde à separação vertical entre a câmera e o solo sob sua posição. No protocolo, ela é calculada pela diferença entre as cotas da câmera e do terreno. A cabeça e a pelve não constituem a referência da AGL.
 
-No padrão COCO, a avaliação considera múltiplos limiares de IoU, como ocorre no mAP@0.5:0.95, além de permitir análises por tamanho de objeto, como $AP_{small}$, $AP_{medium}$ e $AP_{large}$ \cite{lin2014microsoft}. Essa estratificação é particularmente relevante para esta pesquisa, pois um dos desafios centrais é avaliar a capacidade dos modelos de detectar pessoas pequenas em imagens aéreas.
+A pelve, situada na região da bacia, é o ponto corporal usado para a distância e o direcionamento da câmera no controle. A distância euclidiana câmera--pelve $d$ combina a separação horizontal $r$ e a diferença vertical $\Delta z$:
+\begin{equation}
+d^2=r^2+(\Delta z)^2.
+\end{equation}
+Em piso nivelado, a AGL equivale a $\Delta z$ somada à altura da pelve sobre o piso. Em relevo irregular, a cota do terreno sob a câmera precisa ser considerada separadamente.
 
-Além das métricas de qualidade de detecção, esta pesquisa considera o tempo de inferência e a taxa de quadros por segundo, expressa em FPS. Essas métricas permitem avaliar a viabilidade computacional dos modelos, especialmente em aplicações nas quais a resposta precisa ocorrer em tempo próximo ao real.
+\subsection{Escala, perspectiva e oclusão}
+Com campo de visão e resolução fixos, aumentar a distância tende a reduzir a escala aparente do alvo. Mudar o ângulo altera a projeção do corpo, mesmo quando a distância permanece igual. A área da caixa e a quantidade de pixels da pessoa não são, portanto, constantes apenas porque $d$ foi controlada.
+
+Uma parte do corpo pode encobrir outra, fenômeno de auto-oclusão. Árvores, veículos ou estruturas podem produzir oclusão externa. O corte pela borda do quadro é um terceiro fenômeno, denominado truncamento. Embora todos reduzam a informação observável, eles precisam ser distinguidos para interpretar uma anotação ou uma omissão.
+
+\FloatBarrier
+\section{Detecção de objetos pequenos em imagens aéreas}
+\label{sec:objetos-pequenos}
+\subsection{Escala aparente e quantidade de informação}
+Um objeto pequeno ocupa uma região reduzida da imagem, independentemente de seu tamanho físico. Quando a câmera se afasta, a pessoa passa a apresentar menos pixels, dificultando distinguir contornos e partes do corpo. \citeonline{singh2018snip} mostram que redes convolucionais não são automaticamente invariantes a grandes mudanças de escala.
+
+A resolução do arquivo completo não informa sozinha o nível de detalhe do alvo: seu tamanho na entrada da rede também importa. Como exemplo didático, reduzir uma imagem de 1.920 para 1.280 pixels transforma um alvo hipotético de 24 pixels de altura em aproximadamente 16. O preenchimento de bordas não recupera os detalhes perdidos.
+
+O COCO delimita a faixa de objetos pequenos por $32^2$ pixels de área anotada \cite{coco_eval}. Essa convenção não equivale à altura da caixa nem a um tamanho mínimo detectável. Classificar os alvos de 40 m nessa faixa depende de suas áreas registradas, não apenas da distância.
+
+\subsection{Características multiescala e localização das caixas}
+As redes reduzem a resolução espacial em suas camadas. A FPN combina diferentes níveis para associar informação semântica e maior resolução \cite{lin2017fpn}. O uso de múltiplas escalas ajuda a aproveitar detalhes e contexto, mas não elimina a dificuldade dos alvos com poucos pixels. No YOLO11, o \textit{stride} de oito na grade P3 descreve a amostragem espacial, sem estabelecer um tamanho mínimo obrigatório de pessoa.
+
+Caixas pequenas também são mais sensíveis a deslocamentos. Em um exemplo didático, deslocar horizontalmente dois pixels entre caixas iguais de $10\times10$ pixels produz IoU de aproximadamente 0,67; em caixas de $4\times4$, o valor cai para 0,33. Com limiar de 0,50, o segundo caso não é pareado e pode gerar FP e FN simultaneamente.
+
+\subsection{Relação com o controle e com os mapas florestais}
+No controle, distância e ponto de vista alteram a projeção corporal. Nas florestas, também variam visibilidade, fundo e enquadramento. A escala é uma explicação plausível para parte das omissões, mas o recall não permite separá-la de oclusão, perspectiva ou diferença de domínio. Como a análise é organizada por ângulo e distância, sem estratificação por área COCO, não se atribuem todas as falhas a objetos pequenos. Referências válidas com poucos pixels permanecem elegíveis.
+
+\section{Avaliação por caixas delimitadoras}
+A caixa prevista $B_p$ é comparada à caixa de referência $B_g$ pela interseção sobre união:
+\begin{equation}
+\operatorname{IoU}(B_p,B_g)=\frac{|B_p\cap B_g|}{|B_p\cup B_g|}.
+\end{equation}
+O numerador representa a área em comum, e o denominador corresponde à área total coberta pelas duas caixas. Uma previsão pode apontar para a região da pessoa e ainda não atingir o limiar de IoU exigido. Nesse caso, ela pode produzir um falso positivo e deixar a referência como falso negativo.
+
+No pareamento um a um, uma referência admite no máximo uma previsão correta. Caixas adicionais sobre a mesma pessoa não geram novos acertos. A NMS, por sua vez, atua antes da avaliação para reduzir previsões redundantes entre si. Seu limiar tem outra finalidade e não deve ser confundido com o limiar de pareamento com a referência.
+
+\subsection{Precisão, recall e F1}
+Adotam-se VP para verdadeiros positivos, FP para falsos positivos e FN para falsos negativos. No ponto operacional, as métricas são:
+\begin{align}
+\text{Precisão}&=\frac{VP}{VP+FP},\\
+\mathrm{Recall}&=\frac{VP}{VP+FN},\\
+F_1&=\frac{2VP}{2VP+FP+FN}.
+\end{align}
+A precisão informa a proporção de previsões corretas; o recall indica a proporção de referências encontradas. O F1 combina as duas medidas e penaliza situações nas quais uma delas permanece baixa. Um detector que produz poucas caixas pode ter precisão alta e ainda omitir grande parte das pessoas.
+
+Como exemplo didático, oito acertos entre dez previsões geram precisão de 80\%. Se havia vinte pessoas elegíveis, o recall é 40\% e o F1 é aproximadamente 53,3\%. Esse exemplo apenas explica as fórmulas e não constitui um resultado experimental do TCC.
+
+Quando um denominador é zero, a métrica correspondente é indefinida. Isso difere de um resultado igual a zero com denominador válido. Uma imagem sem pessoas elegíveis continua podendo produzir FP. Não se calcula acurácia a partir de verdadeiros negativos, pois o protocolo não estabelece uma enumeração finita de todas as possíveis caixas de fundo.
+
+\subsection{Precisão média e qualidade de localização}
+A AP resume a curva precisão--recall obtida ao variar o limiar de confiança. O avaliador COCO utiliza 101 níveis de recall. $AP_{50}$ considera o pareamento com IoU de 0,50, enquanto $AP_{50:95}$ reúne dez limiares, de 0,50 a 0,95, em passos de 0,05 \cite{coco_eval}. Como há uma classe de interesse, a média entre classes coincide com o AP dessa classe, sob o mesmo protocolo.
+
+AP e recall operacional examinam aspectos diferentes. O segundo usa um limiar fixo de confiança; a primeira considera a ordenação das previsões e a cobertura da curva. Um detector pode apresentar maior recall a confiança 0,25 e menor AP quando a avaliação exige localização mais precisa ou considera outros pontos da curva.
+
+\section{Estudos relacionados}
+\citeonline{lee2021synthetic} utilizam o motor Unity para gerar imagens de pessoas sob diferentes posições de câmera, poses e condições de iluminação. Os autores avaliam Tiny-YOLO, YOLOv3 e RetinaNet e relatam queda de desempenho em vistas próximas ao nadir. Essa abordagem se aproxima do presente trabalho pelo uso da simulação para examinar a resposta de detectores às condições geométricas de captura. No artigo, a posição da câmera é explorada por alturas e raios de trajetórias circulares; neste TCC, os ângulos off-nadir são comparados mantendo a distância câmera--pelve em 10, 20 ou 40 m. A comparação considera a geometria de cada estudo, pois inclinação e posição angular ao redor do alvo representam grandezas distintas.
+
+O benchmark Archangel reúne subconjuntos reais e sintéticos com metadados de posição da aeronave e pose dos alvos \cite{shen2023archangel}. Sua contribuição está em associar as imagens às condições de aquisição, permitindo analisar variações de desempenho que uma métrica global pode ocultar. Essa perspectiva orienta a organização dos resultados deste TCC por ângulo e distância, vinculando cada captura aos seus registros geométricos.
+
+\citeonline{chen2025nsv} apresentam o conjunto Novel Surveillance View e uma abordagem para detecção de pedestres sob variações de perspectiva aérea. A proposta combina decomposição de características relacionadas à perspectiva, convoluções deformáveis e atenção espacial com integração multiescala. O estudo contribui para compreender que mudanças do ponto de vista alteram a representação visual dos pedestres. Enquanto os autores propõem adaptar o detector a essas variações, esta pesquisa examina como dois sistemas com pesos fixos respondem às condições de captura.
+
+\citeonline{yang2025aerial} propõem o MSA-YOLO, que incorpora atenção por canais e uma estrutura de predição multiescala para a detecção de pedestres pequenos e ocluídos. Os autores também apresentam o conjunto Aerial Pedestrian, com imagens aéreas de diferentes cenas e pontos de vista. A relação com este trabalho está na importância da escala aparente e da visibilidade para interpretar omissões. Aqui, esses fatores ajudam a discutir os resultados por distância e cenário, enquanto o experimento principal mantém o foco na variação angular.
+
+\citeonline{pinto2024} investiga a detecção e a contagem de pessoas em multidões com YOLOv8, incluindo treinamento e avaliação sob diferentes condições de iluminação, resolução e densidade. O trabalho aproxima-se deste TCC pela detecção de pessoas em imagens aéreas, mas concentra-se na contagem e na adequação do modelo à tarefa. \citeonline{bernardo2020} apresenta um sistema de vigilância cooperativa com ARPs, envolvendo detecção, rastreamento, classificação e processamento embarcado, com experimentos simulados e reais. Essa pesquisa contextualiza a detecção como componente de um sistema aéreo mais amplo; o presente estudo concentra-se na avaliação das imagens geradas sob condições geométricas conhecidas.
+
+Em conjunto, esses estudos mostram a importância das condições de aquisição, dos metadados geométricos e da escala dos alvos na detecção aérea de pessoas. Nesta pesquisa, essas questões orientam uma avaliação com pesos originais fixos, cinco ângulos off-nadir e três distâncias câmera--pelve, acompanhada de uma análise complementar em cinco mapas sintéticos. O recorte permite examinar a resposta dos detectores às condições de captura sem modificar seus pesos. A discussão com a literatura considera as diferenças entre conjuntos, convenções geométricas e protocolos de avaliação.

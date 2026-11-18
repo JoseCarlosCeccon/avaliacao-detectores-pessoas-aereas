@@ -1,0 +1,15 @@
+{
+  "consulta": "2026-10-19",
+  "pasta_principal": "https://drive.google.com/drive/folders/11h1-DsRock881X59hj5G6sXxDJNVzMVC",
+  "fontes": [
+    {"arquivo":"controlado_celulas.csv", "url":"https://drive.google.com/file/d/1nLDvh2pggbgVuHa3QC_nUtV_iE473_HY/view", "uso":"15 células dos modelos originais COCO"},
+    {"arquivo":"resumo_modelos.csv", "url":"https://drive.google.com/file/d/1hiufSu3WyGYzKPeopAvXnLISNHycSz_n/view", "uso":"Conferência de contagens, precisão, recall, F1 e AP do controle"},
+    {"arquivo":"versoes_ambiente.txt", "url":"https://drive.google.com/file/d/1xVXnWtWtl_DUZ1qevfTM8_eVWZFzdY4e/view", "uso":"Versões registradas no ambiente de origem"},
+    {"arquivo":"executar_testes_tcc.py", "url":"https://drive.google.com/file/d/10NJb0Wvzg0NYsLs7Cu6oawlMdyiAfT1S/view", "uso":"Carregamento do YOLO e chamada predict"},
+    {"arquivo":"faster_core.py", "url":"https://drive.google.com/file/d/11wOTb1XmqyCevlUVJqVVMe3HK8Ut_f7H/view", "uso":"Adaptador TorchVision e carregamento de pesos"},
+    {"arquivo":"analyze.py", "url":"https://drive.google.com/file/d/1y7ugHRBVhSHQvu-H8I5Ql6offZLN-NRL/view", "uso":"Pareamento, agregação e leitura de propostas"},
+    {"pasta":"Images do controle", "url":"https://drive.google.com/drive/folders/1VIKLqqMjMEWN9hvEzJjHzp78UuRaqcqL", "uso":"Localização dos arquivos para auditoria futura"},
+    {"pasta":"Metadata do controle", "url":"https://drive.google.com/drive/folders/1QVIGi2b4dqgvxxBeFLC1BRMYiBtv1yfs", "uso":"Identificação de capturas, personagens e geometria"}
+  ],
+  "nota": "Consulta documental. Sem reexecução de inferência ou auditoria visual integral. Resultados ajustados existentes nas fontes históricas não integram o recorte do TCC."
+}

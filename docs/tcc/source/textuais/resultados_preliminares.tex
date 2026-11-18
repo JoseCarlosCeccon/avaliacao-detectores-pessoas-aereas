@@ -1,183 +1,234 @@
-\chapter[Resultados Preliminares]{Resultados Preliminares}
+\chapter{Resultados e Discussão}
+\section{Organização das evidências}
+Os resultados preliminares são separados por universo experimental. O controle de 375 imagens responde prioritariamente à questão sobre ângulo e distância. O acervo de 2.300 imagens fornece contexto para o YOLO11s original. O subconjunto de 380 imagens permite uma comparação observacional entre os dois detectores. Os denominadores desses conjuntos não são somados. No acervo observacional, o Faster R-CNN foi avaliado apenas no subconjunto de 380 imagens. As diferenças são descritivas, sem intervalos de confiança ou testes de significância nesta análise.
 
-Este capítulo apresenta os resultados preliminares obtidos na etapa de validação do pipeline experimental. Essa etapa teve como finalidade verificar se o conjunto de dados convertido a partir do VisDrone poderia ser corretamente lido pelos frameworks de treinamento, se as anotações estavam compatíveis com as imagens e se o processo de treinamento, validação e geração de artefatos ocorria adequadamente. Portanto, os resultados apresentados neste capítulo não constituem a comparação final entre os modelos definidos na metodologia, mas uma evidência inicial de funcionamento do fluxo experimental.
-
-\section{Desenvolvimento Inicial do Projeto}
-
-Como evidência prática do desenvolvimento inicial, foi implementado um pipeline experimental para preparação dos dados, treinamento piloto e avaliação preliminar dos modelos de detecção. Esse pipeline contempla a conversão das anotações do VisDrone para o formato YOLO, a criação de subconjuntos pilotos, a adaptação das anotações para modelos do TorchVision e a execução inicial dos modelos YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16.
-
-Os artefatos gerados incluem arquivos de perdas de treinamento, métricas de validação, pesos ajustados dos modelos e imagens com caixas delimitadoras previstas. Dessa forma, o estágio atual do projeto já apresenta um protótipo funcional do fluxo experimental necessário para a comparação dos modelos definidos na metodologia.
-
-\begin{table}[ht]
-  \caption{Artefatos produzidos no desenvolvimento inicial}
-  \label{tab:artefatos-desenvolvimento-inicial}
-  \centering
-  \small
-  \begin{tabularx}{\textwidth}{lXX}
-    \hline
-    \bfseries Artefato & \bfseries Evidência produzida & \bfseries Finalidade no projeto \\
-    \hline
-    Scripts & Rotinas para inspeção do VisDrone, conversão das anotações, criação de subconjunto piloto, treinamento e avaliação dos modelos. & Automatizar o fluxo experimental e favorecer a reprodutibilidade. \\
-    Dataset convertido & Base VisDrone organizada no formato YOLO, com união das classes \textit{pedestrian} e \textit{people} na classe pessoa. & Padronizar a entrada dos modelos e viabilizar os testes pilotos. \\
-    Métricas & Arquivos com precisão, recall, F1-score, tempo médio de inferência, FPS e perdas de treinamento. & Quantificar o desempenho preliminar dos detectores avaliados. \\
-    Checkpoints & Pesos ajustados gerados após os treinamentos pilotos. & Registrar o estado dos modelos treinados e permitir novas inferências. \\
-    Imagens de predição & Figuras com anotações reais e caixas previstas pelos modelos. & Apoiar a análise qualitativa das detecções, falsos positivos e falsos negativos. \\
-    Predições COCO & Arquivos JSON com as predições dos três modelos no formato COCO. & Permitir avaliação padronizada de precisão, recall, F1-score, mAP e tempo de inferência. \\
-    \hline
-  \end{tabularx}
-  \source
+\section{Resultado principal: ângulo com distância controlada}
+A Tabela \ref{tab:recall-celulas} contém todas as 15 combinações. O número de referências é 25 em cada linha para cada modelo. Os FN são obtidos por $25-VP$; as porcentagens são recall, não precisão.
+\begin{table}[htb]
+\caption{Recall e verdadeiros positivos no experimento controlado}
+\label{tab:recall-celulas}\centering\small
+\begin{tabular}{rr r r r r}
+\hline Distância & Ângulo & VP YOLO & Recall YOLO & VP Faster & Recall Faster\\\hline
+10 m & $0^\circ$ & 1 & 4\% & 9 & 36\%\\
+10 m & $15^\circ$ & 6 & 24\% & 17 & 68\%\\
+10 m & $30^\circ$ & 20 & 80\% & 24 & 96\%\\
+10 m & $45^\circ$ & 25 & 100\% & 25 & 100\%\\
+10 m & $60^\circ$ & 25 & 100\% & 25 & 100\%\\\hline
+20 m & $0^\circ$ & 0 & 0\% & 0 & 0\%\\
+20 m & $15^\circ$ & 0 & 0\% & 1 & 4\%\\
+20 m & $30^\circ$ & 15 & 60\% & 11 & 44\%\\
+20 m & $45^\circ$ & 21 & 84\% & 20 & 80\%\\
+20 m & $60^\circ$ & 25 & 100\% & 23 & 92\%\\\hline
+40 m & $0^\circ$ & 0 & 0\% & 0 & 0\%\\
+40 m & $15^\circ$ & 0 & 0\% & 0 & 0\%\\
+40 m & $30^\circ$ & 0 & 0\% & 0 & 0\%\\
+40 m & $45^\circ$ & 3 & 12\% & 5 & 20\%\\
+40 m & $60^\circ$ & 15 & 60\% & 17 & 68\%\\\hline
+\end{tabular}
+\source[Relatório consolidado de influência do ângulo, p. 27; somente pesos pré-treinados.]
 \end{table}
 
-A Figura \ref{fig:predicao-faster-rcnn-piloto} apresenta um exemplo de predição gerada pelo modelo Faster R-CNN no subconjunto piloto. As caixas vermelhas representam as anotações reais da base e as caixas verdes indicam as detecções previstas pelo modelo. A figura evidencia que o pipeline implementado é capaz de gerar saídas visuais interpretáveis, permitindo analisar acertos, perdas de instâncias e possíveis falsos positivos.
-
-\begin{figure}[ht]
-  \caption{Exemplo de predição gerada pelo modelo Faster R-CNN no subconjunto piloto}
-  \label{fig:predicao-faster-rcnn-piloto}
-  \centering
-  \includegraphics[width=\textwidth]{predicao_faster_rcnn_piloto.jpg}
-  \source
+\begin{figure}[htb]
+\caption{Recall em função do off-nadir, separado por distância e detector pré-treinado}
+\centering\includegraphics[width=\textwidth]{controle_recall_curvas.pdf}
+\label{fig:recall-angular}
+\source[Elaboração a partir da Tabela \ref{tab:recall-celulas}; 25 alvos por ponto.]
 \end{figure}
 
-\section{Validação do Pipeline Experimental}
+Em 10 m, os dois modelos atingem 100\% de recall em $45^\circ$ e $60^\circ$. O Faster detecta mais alvos em $0^\circ$, $15^\circ$ e $30^\circ$. Em 20 m, o YOLO apresenta recall superior a partir de $30^\circ$, chegando a 100\% em $60^\circ$, contra 92\% do Faster. Em 40 m, ambos falham em todas as referências de $0^\circ$ a $30^\circ$, e o recall sobe para 60\% e 68\%, respectivamente, em $60^\circ$.
 
-Após a conversão das anotações do VisDrone para o formato YOLO, foi criado um subconjunto piloto com 300 imagens de treinamento, 100 imagens de validação e 100 imagens de teste. Nesse subconjunto, foram mantidas apenas imagens contendo pelo menos uma instância da classe pessoa, formada pela união das categorias \textit{pedestrian} e \textit{people} do VisDrone.
+Dentro do intervalo e das condições avaliadas, o recall aumenta ou permanece estável com a obliquidade nos dois detectores. $60^\circ$ alcança o máximo em cada distância, empatando com $45^\circ$ em 10 m. Esse destaque é restrito ao intervalo estudado. Outros ângulos, azimutes, terrenos, poses e recursos visuais não foram avaliados, e o estudo não inclui imagens reais.
 
-A validação preliminar foi realizada em três etapas. Inicialmente, foram executados testes com o modelo YOLO11s, utilizando a biblioteca Ultralytics. Em seguida, foram executados pilotos com os modelos Faster R-CNN ResNet-50 FPN e SSD300 VGG16, utilizando implementações do TorchVision. Por fim, as predições dos três modelos foram exportadas para o formato COCO, permitindo uma avaliação padronizada no mesmo subconjunto de imagens. Todos os modelos foram inicializados com pesos pré-treinados em bases gerais de detecção, como o COCO, e ajustados para a classe-alvo pessoa \cite{lin2014microsoft, ultralytics_yolo11_docs, torchvision_models}.
+As curvas mudam com a distância: em $30^\circ$, por exemplo, o YOLO apresenta 80\%, 60\% e 0\% de recall a 10, 20 e 40 m. Esse padrão mostra que uma média angular única ocultaria condições importantes. A variação da silhueta projetada e a escala aparente são explicações plausíveis, não causas isoladamente comprovadas por esta análise. A Seção \ref{sec:objetos-pequenos} fundamenta a sensibilidade à escala e à localização das caixas, sem classificar automaticamente todas as referências de 40 m como pequenas. Embora a distância 3D seja fixa dentro de cada curva, a altura e a separação horizontal variam com o ângulo.
 
-\section{Pilotos com YOLO11s}
+\subsection{Diferenças entre as condições de captura}
+A comparação de $0^\circ$ com $60^\circ$ permite quantificar a amplitude observada em cada distância. No YOLO11s, o aumento de recall foi de 96 pontos percentuais em 10 m, 100 em 20 m e 60 em 40 m. No Faster R-CNN, os aumentos foram de 64, 92 e 68 pontos percentuais. São diferenças entre proporções no mesmo delineamento, e não ganhos relativos ou testes de significância.
 
-Foram realizados dois testes iniciais com o modelo YOLO11s. O primeiro teste utilizou uma época de treinamento, resolução de entrada de 320 pixels, tamanho de lote igual a 2 e execução em CPU. O segundo teste utilizou três épocas de treinamento, resolução de entrada de 640 pixels, tamanho de lote igual a 2 e também execução em CPU. Ambos os testes utilizaram pesos pré-treinados do YOLO11s e foram conduzidos com o objetivo de validar o funcionamento do pipeline, não de estabelecer desempenho final do modelo.
+Esse contraste não elimina a importância das condições intermediárias. Em 20 m, por exemplo, o YOLO apresenta recall maior que o Faster a partir de $30^\circ$, enquanto o Faster se destaca nas vistas de menor inclinação em 10 m. A comparação por célula impede que o agregado seja interpretado como domínio de um detector em todas as capturas.
 
-\begin{table}[ht]
-  \caption{Resultados preliminares do teste piloto com YOLO11s}
-  \label{tab:resultados-piloto-yolo}
-  \centering
-  \begin{tabular}{lccccc}
-    \hline
-    \bfseries Configuração & \bfseries Precisão & \bfseries Recall & \bfseries \textit{mAP@0.5} & \bfseries \textit{mAP@0.5:0.95} & \bfseries Tempo (s) \\
-    \hline
-    1 época, 320 px & 0,2786 & 0,0564 & 0,0412 & 0,0102 & 165,117 \\
-    3 épocas, 640 px & 0,3569 & 0,2576 & 0,2143 & 0,0699 & 878,320 \\
-    \hline
-  \end{tabular}
-  \source
+O maior recall nas vistas oblíquas acompanha a direção descrita por \citeonline{lee2021synthetic}. Os modelos e as imagens diferem entre os estudos; a concordância é qualitativa e não comprova equivalência dos resultados.
+
+\subsection{Exemplos de previsões nas capturas controladas}
+A Figura \ref{fig:controle-previsoes} aproxima a leitura quantitativa do conteúdo das imagens. São seis registros do primeiro ator, nas duas inclinações extremas e nas três distâncias. As caixas já estavam presentes no relatório de execução do YOLO11s original: a referência aparece em verde e as propostas com confiança de pelo menos 0,25, em azul. A legenda VP ou FN descreve a recuperação da referência no ponto operacional; uma imagem marcada como FN ainda pode conter uma proposta sem pareamento, contabilizada como FP.
+
+\begin{figure}[htb]
+\caption{Exemplos do YOLO11s COCO: referência, previsão e omissão no controle}
+\centering\includegraphics[width=\textwidth]{controle_exemplos_predicoes.pdf}
+\label{fig:controle-previsoes}
+\source[Recortes documentados no relatório do experimento controlado, p. 15--17, somente painel do modelo original; verde: referência; azul: proposta.]
+\end{figure}
+
+Em 10 m e $0^\circ$, existe uma caixa prevista, mas ela abrange sobretudo a sombra e não satisfaz o IoU mínimo com a referência do corpo. Esse caso ilustra a coexistência de FP e FN em uma mesma imagem: o sistema produz uma resposta sem localizar adequadamente o alvo elegível. Em 10 e 20 m a $60^\circ$, o mesmo ator é recuperado. Em 40 m a $60^\circ$, ele permanece sem pareamento no exemplo, apesar de essa célula apresentar 15 acertos entre os 25 atores no YOLO.
+
+A última comparação mostra por que uma captura não representa todo o resultado de sua célula. O primeiro ator pode falhar em uma condição em que outros acertam, e um exemplo favorável também não comprova ausência de erros no conjunto. As imagens ilustram manifestações observáveis de acerto, omissão e localização inadequada, sem estimar a frequência de cada mecanismo visual no conjunto.
+\FloatBarrier
+
+\section{Qualidade global no controle}
+\begin{table}[htb]
+\caption{Contagens e qualidade de detecção nas 375 capturas controladas}
+\label{tab:controle-global}\centering\small
+\begin{tabular}{lrrrrrr}
+\hline Modelo & VP & FP & FN & Precisão & Recall & F1\\\hline
+YOLO11s & 156 & 69 & 219 & 69,33\% & 41,60\% & 52,00\%\\
+Faster R-CNN & 177 & 95 & 198 & 65,07\% & 47,20\% & 54,71\%\\\hline
+\end{tabular}
+\source[Comparação Faster R-CNN, p. 1; confiança 0,25 e IoU 0,50.]
 \end{table}
 
-Os resultados da Tabela \ref{tab:resultados-piloto-yolo} indicam que o pipeline experimental foi executado com sucesso para o modelo YOLO11s. O treinamento gerou pesos do modelo, métricas de validação, curvas de desempenho, matriz de confusão e imagens com predições sobre o conjunto de validação. Além disso, não foram identificados erros de leitura das imagens, incompatibilidades no arquivo de configuração do conjunto de dados ou falhas no carregamento das anotações.
+O Faster recupera 21 alvos a mais, mas produz 26 FP adicionais. Sua vantagem de recall é 5,60 pontos percentuais, e a de F1 é 2,71 pontos percentuais. O YOLO tem precisão 4,26 pontos percentuais superior. Não há um único vencedor para todos os critérios.
 
-Observa-se que o segundo teste, realizado com três épocas e resolução de 640 pixels, apresentou desempenho superior ao primeiro teste em todas as métricas consideradas. O \textit{mAP@0.5} aumentou de 0,0412 para 0,2143, enquanto o recall aumentou de 0,0564 para 0,2576. Esse comportamento sugere que o aumento da resolução de entrada e do número de épocas favoreceu a detecção de pessoas no subconjunto analisado.
+Os FP por distância são 58, 11 e 0 no YOLO e 74, 20 e 1 no Faster, respectivamente a 10, 20 e 40 m. Na célula de 10 m e $60^\circ$, ambos registram 25 VP, zero FP e zero FN. Uma caixa desenhada, por si só, não demonstra acerto: também deve satisfazer confiança, classe e correspondência com a referência elegível.
 
-\section{Pilotos com Faster R-CNN e SSD}
-
-Após a validação inicial com YOLO11s, foram executados pilotos reais com os modelos Faster R-CNN ResNet-50 FPN e SSD300 VGG16. Esses testes utilizaram o mesmo subconjunto piloto, porém com limite de 50 imagens de treinamento e 20 imagens de validação, uma época de treinamento, tamanho de lote igual a 1 e execução em CPU. O objetivo foi confirmar se os modelos do TorchVision conseguiam ler as anotações convertidas, substituir corretamente as cabeças de detecção para a classe pessoa e gerar perdas, métricas e imagens de predição.
-
-Nos modelos do TorchVision, a classe pessoa foi mapeada para o índice 1, pois o índice 0 é reservado para a classe de fundo. A avaliação preliminar utilizou limiar de confiança igual a 0,25 e considerou como verdadeiro positivo uma detecção cuja interseção sobre união com uma anotação real fosse maior ou igual a 0,50. A Tabela \ref{tab:resultados-piloto-torchvision} apresenta os resultados obtidos.
-
-\begin{table}[ht]
-  \caption{Resultados preliminares dos pilotos com modelos TorchVision}
-  \label{tab:resultados-piloto-torchvision}
-  \centering
-  \small
-  \begin{tabularx}{\textwidth}{Xcccccc}
-    \hline
-    \bfseries Modelo & \bfseries Precisão & \bfseries Recall & \bfseries F1 & \bfseries VP & \bfseries FP & \bfseries FN \\
-    \hline
-    Faster R-CNN ResNet-50 FPN & 0,4495 & 0,2817 & 0,3463 & 129 & 158 & 329 \\
-    SSD300 VGG16 & 0,0003 & 0,0022 & 0,0004 & 1 & 3999 & 457 \\
-    \hline
-  \end{tabularx}
-  \source
+\begin{table}[htb]
+\caption{AP calculado com avaliador COCO comum, em porcentagem}
+\label{tab:ap-comum}\centering\small
+\begin{tabular}{llrr}
+\hline Conjunto & Modelo & $AP_{50}$ & $AP_{50:95}$\\\hline
+Controlado (375) & YOLO11s & 49,59 & 40,70\\
+Controlado (375) & Faster R-CNN & 50,94 & 39,82\\
+Comparativo (380) & YOLO11s & 29,15 & 16,90\\
+Comparativo (380) & Faster R-CNN & 27,66 & 14,62\\\hline
+\end{tabular}
+\source[Comparação Faster R-CNN, p. 15; COCOeval, maxDets=100.]
 \end{table}
 
-A Tabela \ref{tab:tempo-piloto-torchvision} apresenta o tempo médio de inferência por imagem e a taxa de quadros por segundo obtidos nos pilotos. Esses valores devem ser interpretados com cautela, pois foram medidos em CPU e com subconjunto reduzido de validação.
+No controle, o Faster tem $AP_{50}$ ligeiramente maior, mas o YOLO apresenta $AP_{50:95}$ maior. AP agrega a ordenação dos escores e exigências de localização, por isso seu ordenamento pode divergir do recall a confiança fixa. Os antigos valores de AP provenientes do validador Ultralytics não são utilizados na Tabela \ref{tab:ap-comum}.
 
-\begin{table}[ht]
-  \caption{Tempo de inferência nos pilotos com modelos TorchVision}
-  \label{tab:tempo-piloto-torchvision}
-  \centering
-  \begin{tabularx}{\textwidth}{Xcc}
-    \hline
-    \bfseries Modelo & \bfseries Tempo médio por imagem (s) & \bfseries FPS \\
-    \hline
-    Faster R-CNN ResNet-50 FPN & 2,4302 & 0,4115 \\
-    SSD300 VGG16 & 0,2931 & 3,4119 \\
-    \hline
-  \end{tabularx}
-  \source
+\begin{figure}[htb]
+\caption{Comparação global dos detectores nas 375 imagens controladas}
+\centering\includegraphics[width=\textwidth]{controle_metricas_globais.pdf}
+\label{fig:controle-metricas}
+\source[Elaboração a partir de resumo\_modelos.csv, selecionando os dois modelos originais; AP do avaliador COCO comum.]
+\end{figure}
+
+A Figura \ref{fig:controle-metricas} apresenta os mesmos agregados em dois painéis, pois precisão, recall e F1 se referem ao ponto operacional, enquanto AP considera a ordenação das propostas em diferentes escores. O painel superior torna visível a troca entre recuperar mais alvos e aceitar mais previsões incorretas. O inferior mostra que a ordem entre os modelos muda quando a localização é exigida em múltiplos limiares de IoU. As diferenças não constituem uma análise de significância e não sustentam a escolha de um detector universalmente superior.
+\FloatBarrier
+
+\section{Distribuição das omissões e dos falsos positivos no controle}
+A Figura \ref{fig:controle-f1-fp} complementa as curvas de recall com F1 e FP em todas as quinze condições. Em cada linha, a distância é mantida; em cada coluna, o ângulo é comum aos dois detectores. As escalas de F1 e FP representam grandezas diferentes, mas são iguais entre modelos para a mesma medida. F1 reúne precisão e recall, enquanto os FP permanecem apresentados como contagem absoluta.
+
+\begin{figure}[htb]
+\caption{F1 e falsos positivos por ângulo, distância e detector no controle}
+\centering\includegraphics[width=\textwidth]{controle_f1_fp_celulas.pdf}
+\label{fig:controle-f1-fp}
+\source[Elaboração a partir de controlado\_celulas.csv; 25 referências por célula, confiança 0,25 e IoU 0,50.]
+\end{figure}
+
+Em 10 m, o aumento do recall entre $30^\circ$ e $60^\circ$ acompanha a redução de FP: de 16 para zero no YOLO e de 17 para zero no Faster. Em $45^\circ$, ambos recuperam todos os alvos, mas o YOLO ainda registra três FP e o Faster, oito. Por isso, seus F1 são aproximadamente 94,3\% e 86,2\%, apesar do recall de 100\% nos dois. Apenas em $60^\circ$, nessa distância, os dois combinam 25 VP, nenhum FN e nenhum FP.
+
+O Faster produz 31 FP em 10 m e $15^\circ$, mesmo havendo apenas 25 pessoas de referência nessa célula. Isso é possível porque uma imagem pode gerar várias previsões sem correspondência; a contagem de FP não é limitada pelo número de alvos. Sem examinar cada proposta, não é possível distribuir esse total entre duplicatas, fundo e localização inadequada.
+
+Em 40 m e $45^\circ$, os dois modelos têm precisão de 100\%, pois suas poucas propostas válidas são acertos: três no YOLO e cinco no Faster, sem FP. Entretanto, restam 22 e 20 FN. Os recalls são apenas 12\% e 20\%, e os F1, 21,4\% e 33,3\%. Esse caso mostra que alta precisão com poucas respostas não caracteriza recuperação satisfatória das pessoas. Nas células sem nenhuma previsão, a precisão é indefinida; o gráfico não a substitui artificialmente por 100\%.
+\FloatBarrier
+
+\subsection{O que a agregação por distância mostra e o que ela esconde}
+Na Figura \ref{fig:controle-contagens}, cada distância reúne os cinco ângulos e contém 125 referências. A parte sólida das barras representa VP, e a parte hachurada, FN. Os FP ficam em um painel separado: eles são previsões sem correspondência, não pessoas adicionais a serem somadas ao denominador de 125.
+
+\begin{figure}[htb]
+\caption{Referências recuperadas, omissões e falsos positivos por distância no controle}
+\centering\includegraphics[width=\textwidth]{controle_contagens_distancia.pdf}
+\label{fig:controle-contagens}
+\source[Contagens somadas de controlado\_celulas.csv; cinco ângulos e 125 referências em cada distância, para cada detector.]
+\end{figure}
+
+Em 10 m, o YOLO recupera 77 das 125 referências, contra 100 no Faster. Em 20 m, a ordem se inverte: são 61 e 55 acertos. Em 40 m, os totais caem para 18 e 22. A quantidade de omissões nessa última distância é, portanto, 107 no YOLO e 103 no Faster. Esses totais não invalidam os acertos em $60^\circ$; mostram que as demais inclinações continuam difíceis e reduzem a recuperação quando os cinco ângulos são reunidos.
+
+Os FP se concentram em 10 m e se tornam raros em 40 m, mas essa queda coexiste com muitas omissões. Assim, não se interpreta a ausência de FP em uma distância como melhora isolada do detector. Da mesma forma, a queda agregada de recall com a distância é descritiva deste conjunto balanceado: ela não identifica, sozinha, quanto da falha decorre de escala, silhueta ou outra característica da imagem.
+
+Em conjunto, os gráficos respondem a perguntas distintas. As curvas localizam a mudança de recall com o ângulo; a matriz de F1 e FP revela o custo das respostas em cada condição; as barras por distância mostram onde se acumulam omissões. A conclusão sobre captura deve preservar essas três leituras, pois a média global oculta tanto condições favoráveis quanto células sem qualquer acerto.
+\FloatBarrier
+
+\section{Contexto observacional: avaliação completa do YOLO11s}
+\begin{table}[htb]
+\caption{Resultados observacionais por cenário, somente YOLO11s pré-treinado}
+\label{tab:observacional}\centering\small
+\begin{tabular}{lrrrrrr}
+\hline Cenário & VP & FP & FN & Precisão & Recall & F1\\\hline
+Urban\_Centered\_1m & 2.088 & 441 & 10.412 & 82,56\% & 16,70\% & 27,79\%\\
+Urban\_Spread & 2.512 & 275 & 3.847 & 90,13\% & 39,50\% & 54,93\%\\
+Forest\_Centered\_50 & 1.177 & 400 & 13.560 & 74,64\% & 7,99\% & 14,43\%\\
+Forest\_Spread & 0 & 3 & 2.754 & 0,00\% & 0,00\% & 0,00\%\\
+Forest\_Low\_Altitude & 39 & 31 & 1.621 & 55,71\% & 2,35\% & 4,51\%\\\hline
+Total & 5.816 & 1.150 & 32.194 & 83,49\% & 15,30\% & 25,86\%\\\hline
+\end{tabular}
+\source[Avaliação completa YOLO11s original, p. 1.]
 \end{table}
 
-O Faster R-CNN apresentou desempenho inicial superior ao SSD em precisão, recall e F1-score, embora tenha sido consideravelmente mais lento em CPU. Esse comportamento é coerente com a característica de modelos de duas etapas, que tendem a realizar processamento mais custoso por imagem em razão da geração e refinamento de propostas de regiões \cite{ren2015faster}.
+A precisão global de 83,49\% coexiste com recall de apenas 15,30\%. A maior parte das referências elegíveis não é recuperada, e a precisão isolada seria uma síntese insuficiente. Urban\_Spread tem o maior recall entre os cenários; Forest\_Spread não apresenta acertos, apesar de conter 2.754 referências elegíveis. Isso não comprova que vegetação seja a causa exclusiva: distância, escala, enquadramento e visibilidade também variam.
 
-O SSD apresentou comportamento inadequado neste piloto, com número muito elevado de falsos positivos. A inspeção qualitativa das imagens de predição indicou a geração de muitas caixas em regiões de borda e em áreas sem presença humana. Esse resultado não permite concluir que o SSD seja inadequado ao problema, mas indica que o modelo exige revisão de configuração, ajuste do limiar de confiança, treinamento por mais épocas e avaliação com protocolo mais robusto antes de qualquer comparação final.
+\begin{figure}[htb]
+\caption{Exemplo de captura do cenário urbano presente no registro técnico}
+\centering\includegraphics[width=0.94\textwidth]{exemplo_urbano_documentado.png}
+\label{fig:urbano}
+\source[Imagem extraída do registro Urban\_Centered\_1m, p. 5; exemplo de contexto, não nova medição.]
+\end{figure}
 
-As métricas apresentadas nesta seção foram utilizadas principalmente para verificar se os modelos do TorchVision estavam treinando, inferindo e gerando artefatos corretamente. A comparação mais adequada entre os três detectores é apresentada na seção seguinte, na qual todos os modelos são avaliados por um mesmo protocolo em formato COCO.
+O controle não substitui a dificuldade dos cenários completos. Ao retirar oclusores e manter um alvo visível, ele responde a uma pergunta mais delimitada. O aumento do recall agregado no controle não pode ser atribuído somente ao ângulo, pois o universo e a composição das imagens mudaram.
 
-\section{Avaliação Padronizada em Formato COCO}
+\subsection{Papel dos cinco mapas na análise complementar}
+Os mapas observacionais não representam cinco repetições de um mesmo experimento controlado. O urbano centrado concentra os personagens em uma grade, enquanto o espalhado os distribui ao longo da avenida. Os três mapas florestais acrescentam vegetação e outras condições de visibilidade e captura. Essas configurações permitem identificar cenários de falha, mas não atribuir suas diferenças a um fator isolado.
 
-Após a execução dos pilotos, foi realizada uma avaliação padronizada para reduzir a diferença entre as métricas geradas nativamente pelo YOLO11s e as métricas inicialmente calculadas para os modelos do TorchVision. Para isso, as anotações reais e as predições dos três modelos foram convertidas para o formato COCO, permitindo calcular as mesmas métricas para YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16.
+O nome floresta de baixa altitude descreve uma configuração do acervo. Ele não garante, por si só, menor distância câmera--pelve para todas as pessoas ou maior quantidade de pixels visíveis do corpo. AGL, deslocamento horizontal, enquadramento e oclusão precisam ser examinados nos registros de cada relação pessoa--imagem.
 
-A avaliação padronizada foi conduzida no subconjunto piloto de teste, composto por 100 imagens e 2.189 instâncias anotadas da classe pessoa. Para as métricas precisão, recall e F1-score, foi adotado limiar de confiança igual a 0,25 e limiar de IoU igual a 0,50. Para o cálculo de \textit{mAP}, foi utilizado o protocolo COCO, contemplando \textit{mAP@0.5} e \textit{mAP@0.5:0.95}. A Tabela \ref{tab:resultados-padronizados-coco-teste} apresenta os resultados de qualidade de detecção.
+Na floresta espalhada, apenas 2.754 das 15.000 relações são elegíveis. Na configuração de baixa altitude, são 1.660. Isso corresponde a aproximadamente 18,36\% e 11,07\% das relações de origem. Os recalls de 0\% e 2,35\% referem-se às referências que permaneceram elegíveis; eles não usam todas as relações do cenário como denominador. A distinção é necessária para interpretar os resultados e o alcance das exclusões.
 
-\begin{table}[ht]
-  \caption{Resultados padronizados no subconjunto piloto de teste}
-  \label{tab:resultados-padronizados-coco-teste}
-  \centering
-  \small
-  \begin{tabularx}{\textwidth}{Xccccc}
-    \hline
-    \bfseries Modelo & \bfseries Precisão & \bfseries Recall & \bfseries F1 & \bfseries \textit{mAP@0.5} & \bfseries \textit{mAP@0.5:0.95} \\
-    \hline
-    YOLO11s & 0,7950 & 0,0585 & 0,1089 & 0,1301 & 0,0478 \\
-    Faster R-CNN ResNet-50 FPN & 0,2118 & 0,1617 & 0,1834 & 0,0895 & 0,0339 \\
-    SSD300 VGG16 & 0,0002 & 0,0027 & 0,0004 & 0,0000 & 0,0000 \\
-    \hline
-  \end{tabularx}
-  \source
+Um recall muito baixo não torna o cenário cientificamente inútil. Com referências corretas e protocolo aplicado de forma consistente, ele documenta uma condição em que o sistema deixa de recuperar pessoas. O procedimento adequado é verificar os dados e investigar os erros, mantendo o resultado desfavorável quando ele for válido. Excluir mapas somente para elevar as métricas removeria uma parte relevante da evidência.
+
+\subsection{Comparação angular com faixas de distância comuns}
+Para reduzir diferenças de composição entre ângulos, o relatório do YOLO11s apresenta uma análise com faixas de distância presentes nos cinco ângulos de cada mapa. A seleção exige pelo menos vinte referências elegíveis por faixa e ângulo e utiliza os mesmos pesos entre ângulos. A Tabela \ref{tab:angular-observacional} conserva esse recorte; suas porcentagens não substituem os resultados agregados da Tabela \ref{tab:observacional}.
+
+\begin{table}[htb]
+\caption{Recall do YOLO11s por ângulo com padronização de distância, em porcentagem}
+\label{tab:angular-observacional}\centering\small
+\begin{tabular}{lrrrrrl}
+\toprule Cenário & $0^\circ$ & $15^\circ$ & $30^\circ$ & $45^\circ$ & $60^\circ$ & Faixas\\\midrule
+Urbano espalhado & 4,42 & 15,32 & 38,33 & 67,03 & 77,88 & D02--D04\\
+Urbano centrado & 0,68 & 4,21 & 23,02 & 26,93 & 32,08 & D02--D04\\
+Floresta centrada & 0,30 & 2,92 & 9,17 & 17,44 & 27,56 & D02--D04\\
+Floresta baixa altitude & 0,00 & 0,29 & 1,05 & 2,08 & 5,93 & D03--D05\\
+Floresta espalhada & 0,00 & 0,00 & 0,00 & 0,00 & 0,00 & D05\\\bottomrule
+\end{tabular}
+\source[Avaliação completa YOLO11s original, p. 10 e 20.]
 \end{table}
 
-A Tabela \ref{tab:tempo-padronizado-coco-teste} apresenta as métricas de eficiência computacional obtidas no mesmo subconjunto de teste. Esses valores foram medidos em CPU e, portanto, devem ser interpretados como evidência preliminar de custo computacional, não como desempenho final em ambiente de produção.
+Em quatro mapas, $0^\circ$ tem o menor recall e $60^\circ$ o maior. A floresta espalhada permanece sem acertos. O resultado acompanha a direção geral do controle, mas a padronização não fixa as pessoas visíveis, as oclusões ou os enquadramentos. Além disso, o eixo óptico não coincide com todas as linhas de visada em imagens com várias pessoas. Trata-se de evidência complementar, não de uma segunda intervenção controlada sobre o mesmo alvo.
 
-\begin{table}[ht]
-  \caption{Eficiência computacional padronizada no subconjunto piloto de teste}
-  \label{tab:tempo-padronizado-coco-teste}
-  \centering
-  \begin{tabularx}{\textwidth}{Xcc}
-    \hline
-    \bfseries Modelo & \bfseries Tempo médio por imagem (s) & \bfseries FPS \\
-    \hline
-    YOLO11s & 0,1103 & 9,0668 \\
-    Faster R-CNN ResNet-50 FPN & 2,2035 & 0,4538 \\
-    SSD300 VGG16 & 0,5345 & 1,8709 \\
-    \hline
-  \end{tabularx}
-  \source
+As métricas marginais, sem a padronização, podem produzir outra ordenação entre ângulos. No urbano centrado, o relatório registra recall de 25,16\% em $45^\circ$ e 22,12\% em $60^\circ$; na floresta centrada, 14,45\% e 13,57\%, respectivamente. A mudança mostra por que a distribuição de distâncias precisa acompanhar a interpretação de uma curva angular.
+
+\section{Comparação no subconjunto observacional}
+\begin{table}[htb]
+\caption{Comparação dos detectores em 380 imagens e 6.310 referências elegíveis}
+\label{tab:subconjunto}\centering\small
+\begin{tabular}{lrrrrrr}
+\hline Modelo & VP & FP & FN & Precisão & Recall & F1\\\hline
+YOLO11s & 1.071 & 174 & 5.239 & 86,02\% & 16,97\% & 28,35\%\\
+Faster R-CNN & 1.761 & 1.640 & 4.549 & 51,78\% & 27,91\% & 36,27\%\\\hline
+\end{tabular}
+\source[Comparação Faster R-CNN, p. 1; mesmos arquivos e referências.]
 \end{table}
 
-Os resultados padronizados indicam que o YOLO11s apresentou a maior precisão, o maior \textit{mAP@0.5}, o maior \textit{mAP@0.5:0.95} e a maior taxa de quadros por segundo no subconjunto piloto de teste. O Faster R-CNN, por outro lado, apresentou maior recall e maior F1-score, o que sugere maior capacidade inicial de recuperar instâncias da classe pessoa nesse subconjunto, embora com custo computacional significativamente superior. O SSD300 VGG16 apresentou desempenho muito baixo, mantendo comportamento instável e grande quantidade de falsos positivos.
+O Faster apresenta 690 VP adicionais e 1.466 FP adicionais. Seu recall cresce 10,94 pontos percentuais em relação ao YOLO, enquanto a precisão é 34,24 pontos percentuais menor. Esses dados não identificam automaticamente quais objetos causaram os FP. Para separar fundo, duplicatas e caixas mal localizadas, é necessária inspeção das previsões.
 
-Mesmo com a padronização, esses resultados ainda não devem ser interpretados como conclusão final do trabalho. Eles demonstram que o protocolo comparativo foi implementado e que as métricas podem ser calculadas de forma uniforme entre os modelos, mas os treinamentos utilizados ainda são pilotos, com poucas épocas e subconjuntos reduzidos.
+No mesmo subconjunto, o recall por faixa de distância do YOLO é 23,61\%, 35,85\%, 15,37\%, 12,39\% e 5,83\%, enquanto no Faster é 50,82\%, 50,24\%, 29,71\%, 19,64\% e 13,10\%. Os denominadores são 305, 1.230, 1.178, 2.551 e 1.046 referências, respectivamente nas faixas definidas na metodologia. A faixa mais próxima não possui necessariamente maior recall, mostrando que distância isolada não resume os fatores presentes no acervo observacional.
 
-\section{Interpretação Geral dos Resultados Pilotos}
+\section{Custo computacional observado}
+\begin{table}[htb]
+\caption{Tempo por imagem em CPU: medições de escopo não equivalente}
+\label{tab:tempo}\centering\small
+\begin{tabular}{llrrr}
+\hline Conjunto & Modelo & Média (s) & Mediana (s) & P95 (s)\\\hline
+Comparativo & YOLO11s & 0,268 & 0,267 & 0,285\\
+Comparativo & Faster R-CNN & 2,626 & 2,614 & 2,767\\
+Controlado & YOLO11s & 0,268 & 0,268 & 0,279\\
+Controlado & Faster R-CNN & 2,633 & 2,616 & 2,759\\\hline
+\end{tabular}
+\source[Comparação Faster R-CNN, p. 16; lote 1, sem benchmark temporal comum.]
+\end{table}
 
-De forma geral, os testes preliminares indicam que o pipeline experimental está funcional para as três arquiteturas previstas na metodologia: YOLO11s, Faster R-CNN ResNet-50 FPN e SSD300 VGG16. Foram gerados pesos ajustados, arquivos de perdas, métricas quantitativas e imagens de predição para inspeção visual. Essa validação é importante porque reduz o risco de problemas estruturais na etapa posterior de experimentos completos.
+Os registros sugerem custos operacionais distintos, porém o intervalo cronometrado não é equivalente. Não se publica uma razão rigorosa de velocidade nem FPS de um sistema completo. Eficiência temporal é análise complementar; a questão central permanece a detecção em função da geometria.
 
-Apesar disso, os valores obtidos ainda são baixos para uma aplicação final de monitoramento de áreas restritas. Isso é esperado, pois os testes foram conduzidos com subconjuntos reduzidos, poucas épocas de treinamento e execução em CPU. Além disso, o problema analisado envolve pessoas pequenas em imagens aéreas, condição reconhecidamente desafiadora para modelos de detecção de objetos \cite{zhu2021visdrone}.
+\section{Reprodutibilidade e rastreabilidade}
+Repetir a análise exige conhecer a identidade dos arquivos e o protocolo que transforma previsões em métricas. Os registros consultados conservam identificadores de cenário, imagem e modelo, além de caixas, escores e resultados de pareamento. Essa estrutura permite consultar uma célula agregada e retornar às observações que a compõem.
 
-Do ponto de vista qualitativo, as imagens de validação geradas indicaram que o YOLO11s e o Faster R-CNN foram capazes de produzir algumas detecções coerentes de pessoas em cenas aéreas. Entretanto, também foram observadas perdas de instâncias, especialmente em regiões com objetos pequenos, alta densidade de pessoas ou presença de fundo visualmente complexo. No caso do SSD, a quantidade de falsos positivos no piloto reforça a necessidade de análise específica dos limiares de confiança e do comportamento das predições.
+O recálculo a partir de propostas salvas responde se as mesmas entradas e regras produzem as mesmas contagens. A repetição da inferência acrescenta a execução dos detectores e depende dos pesos e bibliotecas. Já uma nova captura exige o projeto Unreal completo e seu estado de cena. Esses procedimentos não são equivalentes, e a disponibilidade do PDF de resultados não substitui os arquivos necessários a cada um deles.
 
-\section{Limitações dos Resultados Preliminares}
-
-Os resultados apresentados não devem ser interpretados como evidência conclusiva sobre o desempenho dos modelos nem como resposta definitiva ao problema de pesquisa. O objetivo desta etapa foi exclusivamente validar a execução do pipeline experimental. Entre as principais limitações desta validação preliminar, destacam-se:
-
-\begin{itemize}
-    \item uso de subconjuntos reduzidos do VisDrone;
-    \item treinamento com poucas épocas;
-    \item execução em CPU, o que limita a análise de tempo de inferência;
-    \item avaliação padronizada ainda restrita ao subconjunto piloto, não à base completa;
-    \item ausência de avaliação final com modelos treinados em configuração robusta;
-    \item ausência de discussão sistemática por tamanho dos objetos;
-    \item ausência de análise sistemática de falsos positivos e falsos negativos em todo o conjunto de teste;
-    \item uso de limiar de confiança preliminar, especialmente crítico para o SSD.
-\end{itemize}
-
-Dessa forma, a próxima etapa da pesquisa consistirá na execução dos experimentos completos com os três modelos definidos, utilizando o mesmo protocolo de avaliação, preferencialmente em GPU. Esses experimentos deverão empregar métricas padronizadas, como precisão, recall, F1-score, \textit{mAP@0.5}, \textit{mAP@0.5:0.95}, tempo médio de inferência e FPS, permitindo comparar desempenho de detecção e eficiência computacional de forma consistente.

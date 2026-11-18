@@ -1,90 +1,25 @@
-\documentclass[
-  12pt,				    % tamanho da fonte
-  openright,			% capítulos começam em pág ímpar (insere página vazia caso preciso)
-  oneside,			  % para impressão em recto e verso. Oposto a oneside
-  a4paper,			  % tamanho do papel. 
-  chapter=TITLE,  % títulos de capítulos convertidos em letras maiúsculas
-  section=TITLE,  % títulos de seções convertidos em letras maiúsculas
-  english,			  % idioma adicional para hifenização
-  french,				  % idioma adicional para hifenização
-  spanish,			  % idioma adicional para hifenização
-  brazil				  % o último idioma é o principal do documento
-]{iftex}
-
-% Importa as macros do projeto
+\documentclass[12pt,openany,oneside,a4paper,chapter=TITLE,section=TITLE,english,brazil]{iftex}
 \input{macros.tex}
-
-% Novos comandos
-\newcommand{\ie}{\textit{i.e. }}
-\newcommand{\eg}{\textit{e.g. }}
-
 \begin{document}
-
-  % --------------------------------------------------- %
-  % CAPAS                                               %
-  % --------------------------------------------------- %
-  % CAPA E FOLHA DE ROSTO
-  \capas
-  \imprimircapa
-  \imprimirfolhaderosto
-  \imprimirfichacatalografica
-  % \includepdf[pages=-]{pre_textuais/ficha.pdf}
-
-  % --------------------------------------------------- %
-  % ELEMENTOS PRÉ-TEXTUAIS                              %
-  % --------------------------------------------------- %
-  % APROVAÇÃO, DEDICATÓRIA, AGRADECIMENTOS, EPÍGRAFE
-  \pretextual
-  \imprimiraprovacao
-  % \includepdf[pages=-]{pre_textuais/aprovacao.pdf}
-  \imprimirdedicatoria
-  \imprimiragradecimentos
-  \imprimirepigrafe
-  
-  % RESUMO - PT/EN
-  \input{pre_textuais/resumo}
-  
-  % LISTAS E SUMÁRIO
-  \imprimirlistafiguras
-  \imprimirlistatabelas
-  \imprimirlistaquadros
-  \imprimirlistasiglas
-  \imprimirlistasimbolos
-  \imprimirsumario
-
-  % --------------------------------------------------- %
-  % ELEMENTOS TEXTUAIS                                  %
-  % --------------------------------------------------- %
-  \textual
-  \graphicspath{{figuras/}}   
-  \input{textuais/introducao}
-  \input{textuais/ref_teorico}
-  \input{textuais/metodologia}
-  \input{textuais/resultados_preliminares}
-  \input{textuais/conclusao}
-    
-  % --------------------------------------------------- %
-  % ELEMENTOS POS-TEXTUAIS %
-  % --------------------------------------------------- %
-  \postextual
-  
-  % Referencias Bibliográficas
-  \bibliographystyle{abntex2-alf} % Autor-Data
-  \bibliography{bibliografia}
-    
-  % Apêndices
-  \begin{apendicesenv}
-    \input{pos_textuais/apendice.tex}
-  \end{apendicesenv}
-
-  % Anexos
-  \begin{anexosenv}
-    \input{pos_textuais/anexo.tex}
-    \input{pos_textuais/easyreview.tex}
-  \end{anexosenv}
-
-  % Índice Remissivo
-  \phantompart
-  \printindex
-
+\capas
+\imprimircapa
+\imprimirfolhaderosto
+% Documento em construção. Não inclui aprovação ou ficha fictícias.
+\pretextual
+\input{pre_textuais/resumo}
+\imprimirlistafiguras
+\imprimirlistatabelas
+\imprimirlistasiglas
+\imprimirlistasimbolos
+\imprimirsumario
+\textual
+\graphicspath{{figuras/}}
+\input{textuais/introducao}
+\input{textuais/ref_teorico}
+\input{textuais/metodologia}
+\input{textuais/resultados_preliminares}
+\input{textuais/conclusao}
+\postextual
+\bibliographystyle{abntex2-alf}
+\bibliography{bibliografia}
 \end{document}

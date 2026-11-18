@@ -1,0 +1,16 @@
+\begin{tikzpicture}[x=0.85cm,y=0.85cm,>=Stealth,font=\small]
+\coordinate (C) at (0,6);
+\coordinate (P) at (8.66,1);
+\draw[thick] (-1.5,-0.6)--(10,-0.6) node[right]{Solo};
+\draw[densely dashed,gray] (C)--(0,-0.6);
+\draw[densely dashed,gray] (0,1)--(P);
+\draw[thick] (C)--(P) node[midway,above,sloped]{$d$: câmera--pelve};
+\fill (C) circle (2pt) node[above right]{Câmera $C$};
+\fill (P) circle (2pt) node[above right]{Pelve $P$};
+\draw[<->] (-0.85,-0.6)--(-0.85,6) node[midway,left,rotate=90,anchor=south]{Altura AGL};
+\draw[<->,gray] (0.4,1.1)--(0.4,5.6) node[midway,right,black]{$\Delta z$};
+\draw[<->] (0,0.55)--(8.66,0.55) node[midway,below]{$r$: separação horizontal};
+\draw (0,4.8) arc[start angle=-90,end angle=-30,radius=1.2];
+\node at (0.58,4.63) {$\theta$};
+\draw[densely dotted] (P)--(8.66,-0.6);
+\end{tikzpicture}

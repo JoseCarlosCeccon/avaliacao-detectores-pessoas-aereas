@@ -1,6 +1,13 @@
-# TCC - VisDrone Person Detection
+# Avaliação de ângulos de captura para detecção de pessoas em imagens aéreas sintéticas
 
-This repository contains the code and data preparation utilities for the TCC experiments on person detection in aerial drone images.
+O experimento controlado avalia YOLO11s e Faster R-CNN com pesos originais do COCO em 375 imagens sintéticas. O delineamento combina 25 personagens, cinco ângulos de captura e três distâncias entre câmera e pelve.
+
+- [Documento e fontes do TCC](docs/tcc/README.md)
+- [Preparação da auditoria visual e guia de fine-tuning](docs/auditoria/README.md)
+
+## Piloto histórico com VisDrone
+
+As seções abaixo documentam a preparação de dados e os experimentos da fase piloto com VisDrone, incluindo o SSD. Os resultados do experimento sintético estão no documento do TCC.
 
 ## Dataset
 

@@ -1,0 +1,7 @@
+﻿model,distance_m,tp,fp,fn
+YOLO_original,10,77,58,48
+YOLO_original,20,61,11,64
+YOLO_original,40,18,0,107
+FRCNN_pretreinado,10,100,74,25
+FRCNN_pretreinado,20,55,20,70
+FRCNN_pretreinado,40,22,1,103

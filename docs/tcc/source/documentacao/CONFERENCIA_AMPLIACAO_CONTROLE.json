@@ -1,0 +1,17 @@
+{
+  "data": "2026-10-20",
+  "paginas_pdf": 53,
+  "figuras_novas": 6,
+  "grafico_recall_refeito": true,
+  "graficos_quantitativos_controle": 4,
+  "capturas_originais_na_serie": 15,
+  "hashes_originais_correspondentes": 15,
+  "recortes_sem_alteracao_pixels": 15,
+  "contextos_completos_sem_alteracao_pixels": 2,
+  "exemplos_previsoes_ja_documentados": 6,
+  "novas_inferencias": false,
+  "pesos": "COCO originais em ambos os detectores",
+  "auditoria_formal": "PLANEJADA, NAO CONCLUIDA",
+  "revisao_visual_pdf": "53 paginas renderizadas; figuras e paginas inspecionadas",
+  "pdf_sha256": "297c5430ea67cf81b4d6586f0e41f98d0c8cf816f27ceff65066e6170976f957"
+}

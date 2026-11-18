@@ -1,135 +1,201 @@
-\chapter[Metodologia]{Metodologia}
+\chapter{Metodologia}
+\section{Delineamento e escopo}
+A pesquisa é quantitativa, experimental e descritiva, baseada em imagens sintéticas produzidas no Unreal Engine 5.4.4. As capturas correspondem a posições discretas de uma câmera virtual, sem simulação de dinâmica de voo ou de um sensor físico. Duas camadas são distinguidas: um acervo observacional de 2.300 imagens, para contextualização, e um experimento controlado de 375 imagens, que constitui a evidência principal sobre ângulo. A comparação dos detectores utiliza também um subconjunto de 380 imagens do acervo observacional. As 380 imagens não são novas capturas e não devem ser somadas às 2.300.
 
-Este capítulo descreve os procedimentos metodológicos adotados para a avaliação comparativa de modelos de detecção de pessoas em imagens aéreas. A metodologia foi estruturada de modo a permitir a comparação entre arquiteturas distintas de detecção de objetos, considerando tanto a qualidade das detecções quanto a eficiência computacional dos modelos no contexto de monitoramento de áreas restritas.
+A análise utiliza somente YOLO11s pré-treinado e Faster R-CNN ResNet-50 FPN V2 pré-treinado. Não há atualização de pesos no escopo desta versão. Conforme a distinção da Seção \ref{sec:dados-sinteticos}, as capturas sintéticas são entradas de avaliação de sistemas já treinados. O motor exerce a função de instrumento de captura discutida na Seção \ref{sec:unreal-pesquisa}. Os resultados e configurações foram consolidados a partir dos relatórios técnicos, das tabelas e dos scripts de origem. O relatório consolidado reúne a documentação técnica do projeto \cite{relatorio_projeto}.
 
-\section{Caracterização da Pesquisa}
+A câmera virtual constitui o instrumento de aquisição deste recorte. Não foi realizada coleta com câmera real, calibração de lente ou sensor, nem caracterização experimental de efeitos como ruído do sensor, desfoque por movimento, compressão de vídeo e variações de exposição. A aproximação com uma aquisição de boa qualidade tem o sentido conceitual definido na Seção \ref{sec:camera-virtual-real}; não representa medição de equivalência entre equipamentos ou validação em voo.
 
-Esta pesquisa caracteriza-se como aplicada, experimental e quantitativa. É aplicada porque busca avaliar técnicas de Visão Computacional em um problema prático de monitoramento por imagens aéreas. É experimental porque envolve a execução controlada de modelos de detecção de objetos sobre uma base de imagens previamente definida. É quantitativa porque a comparação entre os modelos será realizada por meio de métricas numéricas de desempenho, como precisão, recall, F1-score, \textit{Intersection over Union} (IoU), \textit{mean Average Precision} (mAP) e tempo de inferência.
+\section{Acervo observacional}
+As imagens têm resolução de $1920\times1080$ pixels, campo de visão registrado de $90^\circ$ e ângulos off-nadir de $0^\circ$, $15^\circ$, $30^\circ$, $45^\circ$ e $60^\circ$. Os cenários variam em contexto, distribuição dos personagens, alturas e visibilidade. A Tabela \ref{tab:acervo} apresenta o universo efetivamente avaliado pelo YOLO11s.
+\begin{table}[htb]
+\caption{Composição do acervo observacional}
+\label{tab:acervo}\centering\small
+\begin{tabular}{lrrrr}
+\hline Cenário & Imagens & Relações & Elegíveis & Excluídas\\\hline
+Urban\_Centered\_1m & 500 & 12.500 & 12.500 & 0\\
+Urban\_Spread & 500 & 12.500 & 6.359 & 6.141\\
+Forest\_Centered\_50 & 300 & 15.000 & 14.737 & 263\\
+Forest\_Spread & 500 & 15.000 & 2.754 & 12.246\\
+Forest\_Low\_Altitude & 500 & 15.000 & 1.660 & 13.340\\\hline
+Total & 2.300 & 70.000 & 38.010 & 31.990\\\hline
+\end{tabular}
+\source[Relatório de avaliação completa do YOLO11s original, p. 3.]
+\end{table}
 
-O foco da investigação está na detecção de pessoas em imagens capturadas por drones, especialmente em situações nas quais os alvos humanos aparecem em pequena escala, sob diferentes perspectivas e em cenários com variação de iluminação, oclusão e complexidade visual. Dessa forma, a análise não se limita à acurácia geral dos modelos, mas também considera sua adequação ao cenário específico de monitoramento aéreo.
+Cada relação pessoa--imagem representa um personagem em uma captura. Esses registros não equivalem a pessoas independentes. No cenário Urban\_Centered\_1m, 25 atores são distribuídos em uma grade $5\times5$ com espaçamento de 1 m. As 500 capturas combinam cinco ângulos, quatro alturas nominais (10, 20, 30 e 40 m) e 25 repetições. As mesmas malhas e poses são reutilizadas; as repetições não representam 25 cidades ou populações diferentes.
 
-\section{Fluxo Metodológico}
+Nesse cenário, a mediana da distância câmera--pelve aumenta de 24,431 m em $0^\circ$ para 40,639 m em $60^\circ$. Logo, comparar recall apenas por ângulo no acervo observacional também compara distribuições de distância distintas. Essa associação motivou o experimento controlado.
 
-O fluxo da pesquisa foi organizado em cinco etapas principais: aquisição dos dados, pré-processamento, seleção dos modelos, execução dos testes e análise comparativa dos resultados. Inicialmente, será selecionada uma base de imagens aéreas com anotações de objetos e presença de pessoas. Em seguida, os dados serão preparados para treinamento e avaliação dos modelos, contemplando a padronização das anotações, a verificação das classes de interesse e o redimensionamento das imagens.
+O conjunto legado de 1.200 imagens registrado no guia de metadados pertence a outro planejamento, com quatro ângulos e cinco alturas. Ele não é incorporado aos denominadores das Tabelas deste trabalho. Contagens de construção de mapas também não devem ser confundidas com o número de pessoas visíveis em cada captura.
 
-Na etapa seguinte, serão definidos e configurados os modelos de detecção avaliados. Os modelos serão treinados ou ajustados a partir de pesos pré-treinados, utilizando os mesmos conjuntos de dados e critérios de avaliação. Após a execução dos testes, os resultados serão comparados por meio de métricas de desempenho e de eficiência computacional, buscando identificar vantagens, limitações e cenários nos quais cada arquitetura apresenta melhor adequação.
+\subsection{Caracterização dos ambientes}
+O urbano centrado organiza os personagens em uma grade na avenida. O urbano espalhado preserva o contexto de edificações e vias, mas distribui as pessoas em posições distintas. Essa diferença permite descrever o detector diante de agrupamentos e enquadramentos variados, sem tratar a comparação entre mapas como uma intervenção exclusiva sobre densidade.
 
-\section{Base de Dados}
+Os cenários florestais utilizam vegetação, trilhas e estruturas do ambiente para compor cenas com diferentes condições de visibilidade. A floresta centrada contém 50 personagens, e as configurações espalhada e de baixa altitude contêm 30 cada. As alturas nominais de captura são 10, 20, 30 e 40 m na floresta centrada e na de baixa altitude; na espalhada, são 40, 50, 60 e 70 m. O inventário de pessoas no mapa não equivale à quantidade visível em cada imagem.
 
-A base principal adotada neste trabalho será o VisDrone, um conjunto de dados voltado para tarefas de detecção e rastreamento de objetos em imagens e vídeos capturados por drones \cite{zhu2021visdrone}. A escolha do VisDrone justifica-se pela aderência ao problema de pesquisa, uma vez que suas imagens apresentam variações de altitude, escala, densidade de objetos, iluminação, perspectiva e complexidade de fundo, características comuns em aplicações reais de monitoramento aéreo.
+\begin{figure}[htb]
+\caption{Ambientes florestais utilizados na análise observacional}
+\centering
+\subfloat[Visão geral do mapa]{\includegraphics[width=0.47\textwidth]{floresta_mapa_documentada.png}}
+\hfill
+\subfloat[Floresta centrada]{\includegraphics[width=0.47\textwidth]{floresta_centrada_documentada.png}}\\
+\subfloat[Floresta espalhada]{\includegraphics[width=0.47\textwidth]{floresta_espalhada_documentada.png}}
+\hfill
+\subfloat[Configuração de baixa altitude]{\includegraphics[width=0.47\textwidth]{floresta_baixa_documentada.png}}
+\label{fig:florestas}
+\source[Capturas dos relatórios do projeto.]
+\end{figure}
 
-Para este estudo, serão utilizadas as imagens da tarefa de detecção de objetos do VisDrone. As classes \textit{pedestrian} e \textit{people} serão tratadas como uma única classe-alvo, denominada pessoa, pois o objetivo do trabalho é avaliar a capacidade dos modelos de identificar presença humana em áreas monitoradas. As demais classes presentes na base, como veículos e bicicletas, não serão consideradas como alvos principais da avaliação, embora possam aparecer nas imagens como elementos de fundo.
+A Figura \ref{fig:florestas} caracteriza os ambientes. As imagens ilustrativas possuem pontos de vista distintos e não constituem pares de comparação controlada ou novas medições. As caixas presentes nas capturas pertencem à documentação da execução; os resultados quantitativos são apresentados pelas tabelas correspondentes.
+\FloatBarrier
 
-Após a organização local da base, foram identificadas 6.471 imagens no conjunto de treinamento, 548 imagens no conjunto de validação e 1.610 imagens no conjunto de teste. Considerando a união das classes \textit{pedestrian} e \textit{people}, foram contabilizadas 106.396 instâncias de pessoas no treinamento, 13.969 na validação e 27.382 no teste. Esses valores serão utilizados como referência para documentar a cobertura experimental da pesquisa.
+\section{Elegibilidade e anotação}
+O campo \texttt{annotatable} define se a relação pode ser usada como referência. Uma pessoa com pixels visíveis e caixa válida é elegível, inclusive quando parcialmente ocluída ou cortada. Não foi aplicado um mínimo de tamanho de caixa. As referências utilizam a caixa da silhueta visível, e não necessariamente uma caixa amodal que inclua a parte oculta do corpo.
 
-Sempre que possível, será mantida a divisão oficial do conjunto de dados em treinamento, validação e teste, evitando repartições aleatórias que possam dificultar a reprodutibilidade e a comparação com outros estudos. Caso seja necessário criar uma divisão própria, a separação será realizada de forma estratificada e documentada, preservando a proporção entre os subconjuntos e registrando a semente aleatória utilizada.
+As 31.990 exclusões compreendem 27.258 relações fora do quadro, 3.912 atrás da câmera e 820 totalmente ocluídas. São exclusões de relações, não a remoção de 31.990 imagens. As 2.300 imagens permanecem na avaliação; imagens sem pessoas elegíveis ainda podem contribuir com FP.
 
-\section{Pré-processamento dos Dados}
+Não foram implementadas regiões de ignorar para referências excluídas. Assim, uma previsão sobre um indivíduo excluído pode ser contabilizada como FP por não corresponder ao conjunto elegível. Essa convenção precisa ser considerada em comparações com outros protocolos. A integridade dos totais e metadados registrada nos relatórios não equivale à inspeção manual de todas as máscaras.
 
-O pré-processamento tem como objetivo padronizar os dados de entrada para os diferentes modelos avaliados. Inicialmente, as anotações originais do VisDrone serão verificadas para identificar inconsistências, imagens sem rótulos válidos e ocorrências associadas às classes de interesse. Em seguida, as anotações serão convertidas para os formatos exigidos pelas bibliotecas utilizadas.
+\section{Experimento controlado de ângulo e distância}
+O delineamento combina 25 atores, três distâncias euclidianas câmera--pelve (10, 20 e 40 m) e cinco ângulos off-nadir, totalizando $25\times3\times5=375$ imagens. Cada célula contém 25 alvos, um por imagem. Os alvos são capturados sem oclusão externa medida ou corte de borda. A unidade repetida é o ator observado nas 15 combinações; as 375 capturas não são 375 pessoas diferentes.
 
-Para o modelo YOLO11, as anotações serão convertidas para o formato YOLO, no qual cada objeto é representado pela classe e pelas coordenadas normalizadas da caixa delimitadora. Para os modelos Faster R-CNN e SSD, implementados por meio do TorchVision, as anotações serão organizadas em formato compatível com a estrutura de tensores esperada pelo PyTorch. Além disso, para permitir a comparação uniforme entre os modelos, as anotações reais e as predições serão exportadas para o formato COCO, possibilitando o cálculo padronizado das métricas de detecção \cite{lin2014microsoft}.
+Os 25 atores correspondem a 15 rótulos masculinos e 10 femininos no projeto, compartilhando quatro malhas: uma feminina e três masculinas. Portanto, não há 25 identidades visuais inteiramente distintas. O cenário simplificado foi copiado do mapa urbano, preservando o suporte de captura e a iluminação, mas retirando edifícios, carros, árvores e mobiliário da cópia para reduzir oclusões. Os atores ocupam a mesma região, e somente o alvo é exibido durante cada captura. As poses e orientações previamente salvas são preservadas.
 
-As imagens serão redimensionadas de acordo com a configuração de entrada de cada modelo, preservando as caixas delimitadoras correspondentes. No caso do YOLO11, será adotado redimensionamento com preenchimento proporcional, prática comum em modelos da família YOLO. Nos modelos do TorchVision, serão utilizadas as transformações recomendadas para cada arquitetura, mantendo registro da resolução empregada. Como o redimensionamento pode afetar diretamente a detecção de objetos pequenos, essa decisão será considerada na análise dos resultados.
+\subsection{O que é mantido e o que muda entre as capturas}
+A pergunta do controle é comparar a detecção de um mesmo alvo a uma mesma distância, alterando o ponto de vista. No acervo observacional, mudar a inclinação também pode mudar quais pessoas aparecem, sua distância e sua oclusão. A cena simplificada reduz parte dessas mudanças: cada ator reaparece nas quinze condições e permanece sozinho e visível. O controle, portanto, não procura reproduzir toda a complexidade de um mapa florestal; procura tornar a comparação geométrica mais interpretável.
 
-Também poderão ser aplicadas técnicas de aumento de dados, como espelhamento horizontal, variação moderada de brilho e contraste e pequenas alterações de escala. O uso dessas transformações será controlado e documentado, de modo que a comparação entre os modelos permaneça metodologicamente consistente.
+\begin{table}[htb]
+\caption{Fatores e condições do experimento controlado}
+\label{tab:fatores-controle}\centering\small
+\begin{tabularx}{\textwidth}{p{0.28\textwidth}X}
+\toprule Elemento & Tratamento no delineamento\\\midrule
+Fatores de captura & Distância câmera--pelve de 10, 20 ou 40 m e off-nadir de $0^\circ$, $15^\circ$, $30^\circ$, $45^\circ$ ou $60^\circ$.\\
+Série repetida & O mesmo ator nas 15 combinações; uma captura por combinação.\\
+Referências & Um alvo elegível por imagem; 25 imagens e 25 referências em cada célula.\\
+Pose e orientação & Preservadas para o ator ao longo de sua série.\\
+Cena e captura & Mesma cópia simplificada do mapa, iluminação de origem, resolução e FOV registrados.\\
+Detectores & Dois conjuntos de pesos COCO fixos, aplicados às mesmas 375 imagens.\\
+Respostas & VP, FP, FN, precisão, recall, F1 e AP, conforme seus critérios de avaliação.\\
+Fatores não isolados & Altura AGL, projeção corporal e conteúdo de fundo mudam junto com o ponto de vista.\\\bottomrule
+\end{tabularx}
+\source[Protocolo do experimento controlado, p. 2--5; comparação Faster R-CNN, p. 3.]
+\end{table}
 
-\section{Modelos Avaliados}
+Retirar edifícios, veículos e vegetação não produz um fundo vazio ou idêntico em todas as imagens. A via, as calçadas, as marcações e a sombra do personagem continuam presentes, e sua projeção muda com a câmera. Também pode ocorrer auto-oclusão entre partes do próprio corpo, mesmo sem um objeto externo encobrindo o alvo. Esses aspectos delimitam o sentido de controle adotado aqui.
 
-Foram selecionados três modelos representativos de diferentes abordagens de detecção de objetos: um detector moderno de uma etapa, um detector de duas etapas e um detector clássico utilizado como linha de base. Essa escolha permite comparar arquiteturas com diferentes compromissos entre precisão, recall e velocidade de inferência.
+\begin{figure}[htb]
+\caption{Cena simplificada: duas capturas completas do mesmo ator a 10 m}
+\centering\includegraphics[width=\textwidth]{controle_contexto_cena.pdf}
+\label{fig:controle-contexto}
+\source[Elaborado pelo autor (2026).]
+\end{figure}
 
-\begin{quadro}[ht]
-  \caption{Modelos definidos para avaliação experimental}
-  \label{quad:modelos-avaliados}
-  \centering
-  \small
-  \begin{tabularx}{\textwidth}{p{0.30\textwidth}Xp{0.25\textwidth}}
-    \hline
-    \bfseries Modelo & \bfseries Categoria experimental & \bfseries Implementação \\
-    \hline
-    YOLO11s & Detector moderno de uma etapa & Ultralytics \cite{ultralytics_yolo11_docs} \\
-    Faster R-CNN ResNet-50 FPN & Detector de duas etapas & TorchVision \cite{ren2015faster, torchvision_models} \\
-    SSD300 VGG16 & Detector de uma etapa utilizado como baseline clássico & TorchVision \cite{liu2016ssd, torchvision_models} \\
-    \hline
-  \end{tabularx}
-  \source
-\end{quadro}
+A Figura \ref{fig:controle-contexto} mostra a extensão do enquadramento e o cenário que permanece após a simplificação. Os dois quadros conservam a distância até a pelve, mas não a posição nem a altura da câmera. A diferença visual não resulta da troca de mapa ou de personagem.
 
-O YOLO11s será utilizado como representante de detectores modernos de uma etapa. Modelos dessa família realizam a predição das caixas delimitadoras e das classes diretamente a partir da imagem de entrada, favorecendo aplicações que demandam velocidade de inferência. O Faster R-CNN será utilizado como representante de modelos de duas etapas, tradicionalmente associados a maior precisão em diversas tarefas de detecção. O SSD300 VGG16 será empregado como baseline clássico, permitindo verificar o ganho obtido por arquiteturas mais recentes em relação a um detector consolidado na literatura.
-
-\section{Treinamento e Ajuste Fino}
-
-Os modelos serão inicializados com pesos pré-treinados em bases gerais de detecção de objetos, como o COCO, e posteriormente ajustados para o cenário de imagens aéreas. Essa estratégia de transferência de aprendizado é adequada porque reduz o custo de treinamento e permite aproveitar representações visuais previamente aprendidas em grandes bases de imagens.
-
-Para cada modelo, a camada ou cabeça de detecção será adaptada para a classe-alvo pessoa. No YOLO11, a configuração do conjunto de dados indicará apenas a classe de interesse. Nos modelos Faster R-CNN e SSD, as camadas finais de classificação serão ajustadas para considerar a classe pessoa e a classe de fundo.
-
-O treinamento será realizado utilizando o subconjunto de treinamento, enquanto o subconjunto de validação será empregado para acompanhar o desempenho durante o ajuste fino e selecionar o melhor ponto de parada. O subconjunto de teste será reservado exclusivamente para a avaliação final, evitando vazamento de informação entre treinamento e avaliação.
-
-Os principais hiperparâmetros a serem registrados são: número de épocas, tamanho do lote, resolução de entrada, taxa de aprendizado, otimizador, estratégia de aumento de dados, limiar de confiança, limiar de IoU para NMS e semente aleatória. Caso a disponibilidade computacional permita, cada experimento será repetido com diferentes sementes, possibilitando avaliar a estabilidade dos resultados.
-
-Antes da execução dos experimentos completos, foi realizada uma etapa de validação do pipeline experimental. Essa etapa teve como objetivo verificar se a conversão das anotações, a leitura do conjunto de dados, o treinamento, a validação e a geração de métricas ocorrem corretamente. Para isso, foi criado um subconjunto piloto com 300 imagens de treinamento, 100 imagens de validação e 100 imagens de teste, contendo apenas imagens com pelo menos uma instância da classe pessoa. Os testes pilotos contemplaram o YOLO11s, o Faster R-CNN ResNet-50 FPN e o SSD300 VGG16, permitindo validar tanto o fluxo da Ultralytics quanto o fluxo implementado em PyTorch/TorchVision. Os resultados obtidos nessa etapa não serão tratados como resultados finais da pesquisa, mas como evidência de funcionamento do fluxo experimental.
-
-\section{Métricas de Avaliação}
-
-A avaliação será realizada por meio de métricas amplamente utilizadas em detecção de objetos. A precisão mede a proporção de detecções corretas entre todas as detecções produzidas pelo modelo, enquanto o recall mede a proporção de objetos reais corretamente detectados. Essas métricas são definidas pelas Equações \ref{eq:precision} e \ref{eq:recall}.
-
+\subsection{Posicionamento da câmera}
+Se $P=(P_x,P_y,P_z)$ é a posição da pelve em centímetros, $d$ é a distância em metros e $\theta$ o ângulo off-nadir, a câmera é posicionada em:
 \begin{equation}
-    \label{eq:precision}
-    Precisao = \frac{VP}{VP + FP}
+C=(P_x-100d\sin\theta,\ P_y,\ P_z+100d\cos\theta).
 \end{equation}
-
+O fator 100 converte metros em centímetros, unidade do projeto. A rotação é \textit{pitch} $=-90^\circ+\theta$, \textit{yaw} $=0^\circ$ e \textit{roll} $=0^\circ$, com o eixo óptico apontado para a pelve. Resultam:
 \begin{equation}
-    \label{eq:recall}
-    Recall = \frac{VP}{VP + FN}
+d=\frac{\|C-P\|_2}{100},\qquad r=d\sin\theta,\qquad \Delta z=d\cos\theta.
 \end{equation}
+$r$ é a separação horizontal; $\Delta z$ é a diferença vertical até a pelve. A altura AGL depende do piso sob a câmera e é calculada separadamente. Por exemplo, em $d=10$ m e $\theta=60^\circ$, $r\approx8,66$ m e $\Delta z=5$ m. Os 10 m não significam 10 m acima do solo. Aumentar o ângulo com distância fixa reduz a componente vertical; não se mantêm simultaneamente distância 3D, altura AGL e separação horizontal constantes.
 
-Nessas equações, VP representa os verdadeiros positivos, FP representa os falsos positivos e FN representa os falsos negativos. O F1-score será utilizado como medida de equilíbrio entre precisão e recall, conforme a Equação \ref{eq:f1}.
+\begin{figure}[htb]
+\caption{Geometria do experimento: off-nadir e distância constante até a pelve}
+\centering\input{figuras/geometria_referencia_pelve.tex}
+\label{fig:geometria}
+\source[Elaboração a partir do protocolo controlado, p. 3; esquema ilustrativo em piso nivelado.]
+\end{figure}
+\FloatBarrier
 
-\begin{equation}
-    \label{eq:f1}
-    F1 = 2 \times \frac{Precisao \times Recall}{Precisao + Recall}
-\end{equation}
+As capturas mantêm resolução $1920\times1080$ e FOV horizontal de $90^\circ$. A ordem foi determinística: ator, distância e ângulo. Não houve randomização da ordem. A checagem geométrica reportou erros máximos de distância de $7,11\times10^{-15}$ m e de ângulo de $1,78\times10^{-14}$ graus. Isso verifica a geometria numérica, não o determinismo bit a bit da renderização.
 
-A métrica IoU será utilizada para quantificar a sobreposição entre a caixa delimitadora prevista pelo modelo e a caixa real anotada na base. Uma detecção será considerada correta quando a classe prevista corresponder à classe-alvo e a IoU atingir o limiar definido no protocolo de avaliação.
+A câmera se move entre as condições: altera sua posição e sua inclinação para continuar apontando para a pelve. Em uma série com $d$ fixo, as posições pertencem a um arco de raio $d$ em um plano vertical, conforme as equações. As imagens são capturas discretas dessas posições, e não quadros de uma trajetória de voo validada. Não há, neste experimento, medição de estabilidade de voo, desfoque por movimento ou latência de transmissão.
 
-Também será utilizado o mAP, métrica consolidada para avaliação de detectores de objetos. Serão considerados o mAP@0.5, que utiliza IoU mínima de 0.5, e o mAP@0.5:0.95, que calcula a média em múltiplos limiares de IoU. Para reduzir diferenças entre as ferramentas utilizadas, as predições dos modelos serão registradas em formato COCO e avaliadas por meio de um protocolo comum. Quando disponível, a avaliação também será estratificada por tamanho dos objetos, utilizando métricas como $AP_{small}$, $AP_{medium}$ e $AP_{large}$, pois a detecção de pessoas pequenas constitui um dos principais desafios do cenário aéreo.
+O exemplo do primeiro ator permite distinguir AGL da componente vertical. Seus metadados registram AGL de aproximadamente 10,89 m em $d=10$ m e $0^\circ$, 9,55 m em $30^\circ$ e 5,89 m em $60^\circ$. A diferença vertical câmera--pelve é, respectivamente, 10,00, 8,66 e 5,00 m. A diferença de aproximadamente 0,89 m entre essas duas grandezas decorre da posição da pelve acima do piso nesse ator e nesse local; não é uma altura de pelve universal.
 
-Além das métricas de qualidade de detecção, será avaliada a eficiência computacional dos modelos. Para isso, serão medidos o tempo médio de inferência por imagem e a taxa de quadros por segundo, expressa em FPS. Essas medidas serão calculadas no mesmo ambiente computacional para todos os modelos, após um número inicial de inferências de aquecimento, a fim de reduzir interferências de inicialização.
+\subsection{Leitura visual de uma série completa}
+A Figura \ref{fig:controle-serie} reúne as quinze vistas de \texttt{PERSON\_001}, nos arquivos 000001.png a 000015.png. A seleção segue a primeira série na ordem de captura e inclui todos os seus ângulos e distâncias. Ela não foi formada pela escolha de acertos do detector. Cada painel utiliza o mesmo recorte de $300\times250$ pixels, com limites $(810,415)$ e $(1110,665)$ na imagem original. Assim, o personagem não é ampliado individualmente para compensar a distância. Os originais completos conservam $1920\times1080$ pixels.
 
-\section{Ambiente Computacional}
+\begin{figure}[htb]
+\caption{Quinze vistas do mesmo personagem: ângulo nas colunas e distância nas linhas}
+\centering\includegraphics[width=\textwidth]{controle_serie_15_vistas.pdf}
+\label{fig:controle-serie}
+\source[Recortes das imagens originais 000001.png--000015.png, com condições registradas em capture\_metadata.csv.]
+\end{figure}
 
-Os experimentos devem ser executados em um ambiente computacional controlado, com registro das características de hardware e software. Como o tempo de inferência depende diretamente do equipamento utilizado, especialmente da disponibilidade de GPU, a comparação de FPS será considerada válida apenas entre modelos avaliados no mesmo ambiente.
+A leitura horizontal compara o ponto de vista mantendo o ator e a distância. Em 10 m, a vista superior evidencia cabeça, ombros e sombra; em vistas oblíquas, a projeção do tronco e dos membros se torna mais extensa. A leitura vertical compara a distância mantendo o ator e o ângulo: o corpo ocupa uma região menor do recorte em 40 m. A distância fixa não garante uma caixa de mesmo tamanho quando o ângulo muda, pois a projeção de um corpo tridimensional depende de sua orientação em relação à câmera.
 
-\begin{quadro}[ht]
-  \caption{Ambiente computacional inicialmente identificado}
-  \label{quad:ambiente-computacional}
-  \centering
-  \begin{tabularx}{\textwidth}{lX}
-    \hline
-    \bfseries Item & \bfseries Configuração \\
-    \hline
-    Sistema operacional & Microsoft Windows 11 Pro, 64 bits \\
-    Processador & Intel Core i5-12450H, 8 núcleos e 12 processadores lógicos \\
-    Memória RAM & Aproximadamente 8 GB \\
-    GPU identificada & Intel UHD Graphics; GPU NVIDIA/CUDA não identificada no ambiente local \\
-    Python & 3.12.10 \\
-    PyTorch & 2.10.0, versão CPU \\
-    TorchVision & 0.25.0, versão CPU \\
-    Ultralytics & 8.4.21 \\
-    pycocotools & 2.0.11 \\
-    \hline
-  \end{tabularx}
-  \source
-\end{quadro}
+Essas imagens tornam o procedimento visível, mas representam somente um dos 25 atores e não demonstram a causa de todas as falhas. Os resultados quantitativos seguintes utilizam a totalidade das referências de cada condição. A seleção de imagens para ilustração não constitui uma avaliação da qualidade de todas as anotações.
+\FloatBarrier
 
-Caso os experimentos finais sejam executados em outro ambiente, como uma estação com GPU dedicada ou serviço em nuvem, as informações do Quadro \ref{quad:ambiente-computacional} deverão ser atualizadas. Essa atualização é necessária porque resultados de tempo de inferência obtidos em CPU não devem ser comparados diretamente com resultados obtidos em GPU.
+\subsection{Da captura à comparação dos detectores}
+O encadeamento do experimento começa pela seleção do ator e pela definição de uma das quinze posições de captura. A imagem é renderizada junto com seus registros de geometria e referência. Os dois detectores recebem posteriormente esse mesmo arquivo, sem atualização dos pesos. Suas propostas são avaliadas com as mesmas referências elegíveis e com o pareamento descrito adiante. Por fim, as contagens são reunidas por ator, ângulo e distância.
 
-\section{Forma de Comparação dos Resultados}
+Há duas comparações complementares nesse procedimento. Dentro de um detector, observa-se como a resposta muda entre vistas do mesmo ator. Entre detectores, comparam-se respostas às mesmas imagens e condições. Uma diferença agregada entre YOLO e Faster não substitui a primeira comparação, que constitui a questão principal do trabalho. Cada célula contém 25 referências associadas a atores que compartilham quatro malhas. Essa composição limita a diversidade visual do conjunto; a repetição dos mesmos atores entre condições caracteriza a estrutura de medidas repetidas do experimento.
 
-A comparação dos modelos será conduzida em três dimensões principais: qualidade de detecção, eficiência computacional e adequação ao cenário de monitoramento aéreo. Na primeira dimensão, serão analisadas as métricas de precisão, recall, F1-score, IoU e mAP. Na segunda, serão avaliados o tempo médio de inferência e o FPS. Na terceira, será discutida a capacidade dos modelos de detectar pessoas pequenas, lidar com cenas densas e reduzir falsos positivos em áreas visualmente complexas.
+\section{Configuração congelada dos detectores}
+A Tabela \ref{tab:config} registra os valores reportados, sem preencher parâmetros ausentes por suposição.
+\begin{table}[htb]
+\caption{Configuração dos sistemas de detecção avaliados}
+\label{tab:config}\centering\small
+\begin{tabularx}{\textwidth}{p{0.25\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X}
+\hline Item & YOLO11s & Faster R-CNN\\\hline
+Pesos & \texttt{yolo11s.pt}, COCO & ResNet-50 FPN V2, COCO\_V1\\
+Classe de origem & pessoa: 0 & pessoa: 1; exportada como 0\\
+Escala de entrada & \texttt{imgsz=1280};\newline\texttt{rect=True};\newline\textit{letterbox} & \texttt{min=720};\newline\texttt{max=1280};\newline\textit{resize} nativo\\
+Normalização & Transformação nativa Ultralytics & Normalização ImageNet; padding múltiplo de 32\\
+Execução & CPU; lote 1 & CPU; lote 1\\
+Confiança armazenada & 0,001 & 0,001\\
+Confiança operacional & 0,25 & 0,25\\
+IoU de pareamento & 0,50 & 0,50\\
+NMS de caixas & 0,70 & 0,70\\
+Limite operacional & 300 pessoas/imagem & 300 pessoas/imagem\\
+AP comum & COCOeval; maxDets=100 & COCOeval; maxDets=100\\
+Atualização dos pesos & Nenhuma nesta análise & Nenhuma nesta análise\\\hline
+\end{tabularx}
+\source[Relatório YOLO11s original, p. 2; comparação Faster R-CNN, p. 3.]
+\end{table}
 
-Para que a comparação seja metodologicamente consistente, todos os modelos deverão ser avaliados no mesmo subconjunto de imagens, com as mesmas anotações de referência e com as predições exportadas em formato COCO. Dessa forma, evita-se comparar métricas geradas por rotinas internas distintas de cada biblioteca, tornando os resultados mais reprodutíveis e mais adequados à análise científica.
+Os pesos permanecem fixos. O aumento de dados na inferência do YOLO está desativado. O adaptador Faster preserva as transformações nativas da implementação e seleciona propostas da classe pessoa, conforme o código consultado. Não se declara equivalência de transformações entre bibliotecas: os métodos nativos de resize, normalização e geração de propostas permanecem distintos. O mesmo limiar numérico de confiança tampouco garante escores igualmente calibrados.
 
-Os resultados serão apresentados em tabelas comparativas e gráficos. As tabelas deverão sintetizar as métricas quantitativas de cada modelo, enquanto os gráficos poderão evidenciar diferenças de desempenho, como comparação de mAP, recall e FPS. Também serão incluídos exemplos visuais de detecções corretas, falsos positivos e falsos negativos, permitindo uma análise qualitativa dos erros cometidos pelos modelos.
+\section{Implementação da inferência em Python}
+O processamento utiliza scripts Python que articulam as bibliotecas dos detectores e a avaliação do projeto. A execução tem responsabilidades distintas: localizar a imagem e seus metadados, carregar os pesos, produzir previsões e comparar essas previsões com as referências. Essa separação permite recalcular métricas a partir das propostas salvas sem executar novamente as redes, desde que o cache e o protocolo permaneçam identificados.
 
-Por fim, a escolha do modelo mais adequado não será baseada em uma única métrica isolada. O melhor modelo será discutido considerando o equilíbrio entre desempenho de detecção e custo computacional, de acordo com as necessidades do monitoramento de áreas restritas em imagens aéreas.
+No arquivo \texttt{executar\_testes\_tcc.py}, a classe \texttt{YOLO} é importada da Ultralytics e recebe o caminho dos pesos. A chamada \texttt{model.predict} recebe o arquivo da imagem e os parâmetros do protocolo. O script verifica a classe pessoa, a resolução e o hash do arquivo antes de registrar o resultado. Uma chamada inicial de aquecimento ocorre antes dos intervalos utilizados para medir o tempo por imagem.
+
+As propostas são armazenadas com confiança a partir de 0,001, máximo de 300 caixas e classe pessoa. Esse piso preserva propostas para a avaliação da curva precisão--recall. O ponto operacional de 0,25 é aplicado posteriormente no pareamento. A distinção impede interpretar o valor 0,001 do executor como o limiar usado para apresentar precisão, recall e F1.
+
+No adaptador \texttt{faster\_core.py}, a arquitetura é construída pela TorchVision e o arquivo oficial é carregado com \texttt{torch.load} e \texttt{load\_state\_dict}. O uso de \texttt{weights=None} na criação da arquitetura não indica uma avaliação aleatória: os pesos são inseridos nas instruções seguintes. A imagem é convertida para RGB e transformada em um tensor de ponto flutuante com valores entre zero e um. A normalização e o redimensionamento nativos da rede ocorrem no processamento do modelo.
+
+O pós-processamento do Faster seleciona o escore da classe pessoa após calcular o softmax sobre a saída completa das classes COCO. Em seguida, aplica os critérios de tamanho mínimo, NMS e limite de detecções. Na exportação comum, pessoa recebe o identificador zero, embora corresponda ao índice um na implementação TorchVision. Preservar esse mapeamento evita associar as previsões de um detector à classe de fundo do outro.
+
+O arquivo \texttt{analyze.py} lê as previsões armazenadas e verifica os parâmetros e hashes antes de agregá-las. Seu histórico contempla configurações originais e ajustadas; os resultados selecionados neste trabalho são exclusivamente \texttt{YOLO\_original} e \texttt{FRCNN\_pretreinado}. A presença de rotinas de treinamento ou de arquivos ajustados no pacote não significa que tenham sido usados na análise descrita.
+
+\section{Procedimento de análise dos erros}
+As contagens são examinadas primeiro nas 15 condições controladas. O recall é interpretado junto ao número de referências, e os FP são mantidos na comparação. Depois são analisados os mapas completos e o subconjunto comum. Essa ordem privilegia a pergunta sobre captura e evita escolher um detector apenas pela média global.
+
+Os dados permitem identificar condições com maior frequência de omissões, como vistas superiores em determinadas distâncias. A análise documental não classifica automaticamente o mecanismo visual de cada erro. Uma previsão sem pareamento pode resultar de localização inadequada, duplicata ou confusão com uma região do fundo. Atribuir esses mecanismos exige observar a previsão e a referência na imagem.
+
+Escala e oclusão também precisam ser distinguidas. A área de uma caixa mede um retângulo, não a quantidade exata de pixels do corpo. Uma caixa pequena, por si só, não torna a referência inválida, pois o protocolo não adotou um tamanho mínimo adicional para a elegibilidade.
+
+\section{Pareamento, AP e agregação}
+As previsões operacionais são ordenadas por confiança decrescente. Cada uma é pareada à referência disponível com maior IoU, exigindo IoU $\geq0,50$ e correspondência um-para-um. Duplicatas ou caixas mal localizadas podem produzir FP e deixar a referência como FN. As métricas globais são calculadas pela soma das contagens, não pela média das porcentagens de imagens.
+
+O AP da comparação entre detectores é recalculado com \texttt{pycocotools COCOeval}, sobre propostas armazenadas a partir de confiança 0,001, IoUs 0,50:0,95 e máximo de 100 detecções por imagem. Os valores não são misturados com o resultado anterior do validador Ultralytics, que usava outra inferência e cálculo. O piso de armazenamento pode limitar a cauda da curva precisão--recall.
+
+O recall por ângulo e distância constitui a análise principal. Em cada célula controlada, $VP+FN=25$, de modo que um acerto corresponde a quatro pontos percentuais. As cinco faixas observacionais são $[0,10)$, $[10,20)$, $[20,30)$, $[30,50]$ e $>50$ m; elas têm larguras diferentes e não equivalem às distâncias pontuais do controle.
+
+O subconjunto comparativo de 380 imagens contém 6.310 relações elegíveis e foi definido no particionamento espacial documentado com semente 20261003. Embora os registros históricos o identifiquem como teste, neste recorte ele funciona como subconjunto comum de comparação, pois não há treinamento adicional. Os recursos visuais são compartilhados entre observações; a separação por grupos de captura não equivale à separação de identidades ou de mapas.
+
+\section{Ambiente e rastreabilidade}
+As inferências foram executadas com as seguintes versões: Python 3.12.10, PyTorch 2.14.1+cpu, TorchVision 0.29.1+cpu, Ultralytics 8.4.171 e pycocotools 2.0.11. O ambiente utilizou um processador Ryzen 7 5700X e 8 GB de RAM. A máquina dispunha de GPU AMD RX 580 2048SP, mas as inferências foram realizadas na CPU, com oito threads no YOLO. O sistema operacional não está especificado nos registros de execução.
+
+Os pesos do YOLO11s são identificados pelo hash SHA256\footnote{\texttt{85a76fe86dd8afe384648546b56a7a78580c7cb7b404fc595f97969322d502d5}.}. A rastreabilidade associa os pesos aos scripts, metadados e previsões de ambos os modelos.
+
+Os tempos dos dois modelos têm escopos diferentes: YOLO mede \texttt{predict} a partir do caminho, incluindo preparação, enquanto Faster inicia após criar o tensor RGB. Os blocos ocorreram em momentos diferentes. São custos observados, não um benchmark temporal equivalente. As análises aqui apresentadas são descritivas; não se afirma significância estatística ou efeito causal isolado de todos os fatores geométricos.
+
